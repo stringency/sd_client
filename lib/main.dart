@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'SD Client',
+      title: 'AI生图',
       theme: ThemeData(
         // This is the theme of your application.
         //
