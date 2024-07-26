@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Txt2Imgs extends StatefulWidget {
   final String? selectedScene;
-  final Map<String,String>? selectedStyle;
+  final List<String>? selectedStyle;
   const Txt2Imgs({
     super.key,
     required this.selectedScene,
@@ -17,8 +17,13 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500,
-      color: Colors.purple,
+      child: Column(
+        children: [
+          Text(widget.selectedScene ?? ""),
+          Text(widget.selectedStyle?[0] ?? ""),
+          Text(widget.selectedStyle?[1] ?? ""),
+        ],
+      ),
     );
   }
 }
