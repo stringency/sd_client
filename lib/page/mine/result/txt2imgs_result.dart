@@ -1,3 +1,7 @@
+/**
+ * 保存文图参数和结果
+*/
+
 import 'package:flutter/cupertino.dart';
 
 class Txt2ImgsResult extends StatefulWidget {

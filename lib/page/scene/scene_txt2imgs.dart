@@ -1,8 +1,10 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sd_client/data/const_prompt.dart';
+import 'package:sd_client/data/const_txt2imgs.dart';
+import 'package:sd_client/page/mine/result/txt2imgs_result.dart';
+import 'package:sd_client/page/scene/txt2imgs_result_tmp.dart';
 
 class Txt2Imgs extends StatefulWidget {
   final String? selectedScene;
@@ -19,50 +21,47 @@ class Txt2Imgs extends StatefulWidget {
 }
 
 class _Txt2ImgsState extends State<Txt2Imgs> {
+  final TextEditingController _controller1 = TextEditingController();
+  final TextEditingController _controller2 = TextEditingController();
   bool _showAdvancedOptions = false;
-  TextEditingController _controller1 = TextEditingController();
-  TextEditingController _controller2 = TextEditingController();
 
+  // 需要用户传递的参数
+  // String _currPrompt = "";
+  // String _currNegativePrompt = "";
   double _imageCount = 1; // 图片数量变量
-  void _showTextSelectionDialog(
-      BuildContext context, TextEditingController controller) {
+  // 最终参数
+  // Map<String, dynamic> finalParams = Map<String, dynamic>.from(_baseTxt2img);
+
+  // 提示词选择弹出框
+  void _templateRadioDialog(
+      BuildContext context,
+      TextEditingController controller,
+      String title,
+      Map<String, String> constPrompt) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("选择文本"),
+          title: Text(title),
           content: Container(
             width: double.maxFinite,
             child: ListView(
-              children: [
-                ListTile(
-                  title: Text("示例文本1"),
+              children: constPrompt.entries.map((entry) {
+                return ListTile(
+                  title: Text(entry.key),
+                  // subtitle: Text(entry.value),
                   onTap: () {
                     setState(() {
-                      controller.text += "示例文本1";
+                      if (title == "TEMPLATE") {
+                        controller.text = entry.value;
+                      } else if (title == "WORD") {
+                        controller.text += entry.value;
+                      }
                     });
                     Navigator.of(context).pop();
                   },
-                ),
-                ListTile(
-                  title: Text("示例文本2"),
-                  onTap: () {
-                    setState(() {
-                      controller.text += "示例文本2";
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-                ListTile(
-                  title: Text("示例文本3"),
-                  onTap: () {
-                    setState(() {
-                      controller.text += "示例文本3";
-                    });
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+                );
+              }).toList(),
             ),
           ),
         );
@@ -111,8 +110,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                           runSpacing: 8.0,
                           children: [
                             ElevatedButton(
-                              onPressed: () => _showTextSelectionDialog(
-                                  context, _controller1),
+                              onPressed: () => _templateRadioDialog(context,
+                                  _controller1, "TEMPLATE", promptTemplate),
                               child: Text(
                                 "提示词模板",
                                 style: TextStyle(
@@ -122,8 +121,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () => _showTextSelectionDialog(
-                                  context, _controller2),
+                              onPressed: () => _templateRadioDialog(
+                                  context, _controller1, "WORD", promptSug),
                               child: Text(
                                 "提示词推荐",
                                 style: TextStyle(
@@ -136,8 +135,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                               // width: 100.0,
                               // height: 25.0,
                               child: ElevatedButton(
-                                onPressed: () => _showTextSelectionDialog(
-                                    context, _controller1),
+                                onPressed: () => _templateRadioDialog(
+                                    context, _controller1, "WORD", promptSug),
                                 child: Text(
                                   "提示词引导",
                                   style: TextStyle(
@@ -159,14 +158,17 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                           ),
                         ),
 
-                        // Buttons to add text to input fields
+                        // 按钮添加提示词
                         Wrap(
                           spacing: 8.0,
                           runSpacing: 8.0,
                           children: [
                             ElevatedButton(
-                              onPressed: () => _showTextSelectionDialog(
-                                  context, _controller1),
+                              onPressed: () => _templateRadioDialog(
+                                  context,
+                                  _controller2,
+                                  "TEMPLATE",
+                                  negativePromptTemplate),
                               child: Text(
                                 "提示词模板",
                                 style: TextStyle(
@@ -176,8 +178,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () => _showTextSelectionDialog(
-                                  context, _controller2),
+                              onPressed: () => _templateRadioDialog(context,
+                                  _controller2, "WORD", negativePromptSug),
                               child: Text(
                                 "提示词推荐",
                                 style: TextStyle(
@@ -190,8 +192,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                               // width: 100.0,
                               // height: 25.0,
                               child: ElevatedButton(
-                                onPressed: () => _showTextSelectionDialog(
-                                    context, _controller1),
+                                onPressed: () => _templateRadioDialog(context,
+                                    _controller2, "WORD", negativePromptSug),
                                 child: Text(
                                   "提示词引导",
                                   style: TextStyle(
@@ -355,7 +357,29 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                // 整合参数，转为json
+                Map<String, dynamic> finalParams =
+                    Map<String, dynamic>.from(baseTxt2img);
+                finalParams['prompt'] = _controller1.text.isNotEmpty
+                    ? _controller1.text
+                    : finalParams['prompt'];
+                finalParams['negative_prompt'] = _controller2.text.isNotEmpty
+                    ? _controller2.text
+                    : finalParams['negative_prompt'];
+                finalParams['batch_size'] = _imageCount.round();
+
+                // 发送参数到云端，获取队列信息
+
+                // 传递参数到结果页，具体生成结果交由结果页处理
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        Txt2ImgsResultTmp(txt2ImgsParams: finalParams),
+                  ),
+                );
+              },
               child: Center(
                 child: Text(
                   "生成图片",

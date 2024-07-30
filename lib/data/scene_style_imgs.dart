@@ -44,7 +44,7 @@
       ]
     },
     {
-      '基于': [
+      '基于。。。': [
         {"科技抽象": "assets/images/sceneimgs/scene11.png"},
         {"自然环保": "assets/images/sceneimgs/scene12.png"},
         {"国风唯美": "assets/images/sceneimgs/scene13.png"},
