@@ -148,63 +148,63 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 40.0),
-                        TextFormField(
-                          controller: _controller2,
-                          maxLines: 5, // 增加行数
-                          decoration: InputDecoration(
-                            labelText: '负面提示词',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
+                        // SizedBox(height: 40.0),
+                        // TextFormField(
+                        //   controller: _controller2,
+                        //   maxLines: 5, // 增加行数
+                        //   decoration: InputDecoration(
+                        //     labelText: '负面提示词',
+                        //     border: OutlineInputBorder(),
+                        //   ),
+                        // ),
 
-                        // 按钮添加提示词
-                        Wrap(
-                          spacing: 8.0,
-                          runSpacing: 8.0,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () => _templateRadioDialog(
-                                  context,
-                                  _controller2,
-                                  "TEMPLATE",
-                                  negativePromptTemplate),
-                              child: Text(
-                                "提示词模板",
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => _templateRadioDialog(context,
-                                  _controller2, "WORD", negativePromptSug),
-                              child: Text(
-                                "提示词推荐",
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              // width: 100.0,
-                              // height: 25.0,
-                              child: ElevatedButton(
-                                onPressed: () => _templateRadioDialog(context,
-                                    _controller2, "WORD", negativePromptSug),
-                                child: Text(
-                                  "提示词引导",
-                                  style: TextStyle(
-                                    fontSize: 10.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        // // 按钮添加提示词
+                        // Wrap(
+                        //   spacing: 8.0,
+                        //   runSpacing: 8.0,
+                        //   children: [
+                        //     ElevatedButton(
+                        //       onPressed: () => _templateRadioDialog(
+                        //           context,
+                        //           _controller2,
+                        //           "TEMPLATE",
+                        //           negativePromptTemplate),
+                        //       child: Text(
+                        //         "提示词模板",
+                        //         style: TextStyle(
+                        //           fontSize: 10.0,
+                        //           fontWeight: FontWeight.bold,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     ElevatedButton(
+                        //       onPressed: () => _templateRadioDialog(context,
+                        //           _controller2, "WORD", negativePromptSug),
+                        //       child: Text(
+                        //         "提示词推荐",
+                        //         style: TextStyle(
+                        //           fontSize: 10.0,
+                        //           fontWeight: FontWeight.bold,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     Container(
+                        //       // width: 100.0,
+                        //       // height: 25.0,
+                        //       child: ElevatedButton(
+                        //         onPressed: () => _templateRadioDialog(context,
+                        //             _controller2, "WORD", negativePromptSug),
+                        //         child: Text(
+                        //           "提示词引导",
+                        //           style: TextStyle(
+                        //             fontSize: 10.0,
+                        //             fontWeight: FontWeight.bold,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),
@@ -362,12 +362,12 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 Map<String, dynamic> finalParams =
                     Map<String, dynamic>.from(baseTxt2img);
                 finalParams['prompt'] = _controller1.text.isNotEmpty
-                    ? _controller1.text
+                    ? finalParams['prompt'] + _controller1.text
                     : finalParams['prompt'];
                 finalParams['negative_prompt'] = _controller2.text.isNotEmpty
-                    ? _controller2.text
+                    ? finalParams['negative_prompt'] + _controller2.text
                     : finalParams['negative_prompt'];
-                finalParams['batch_size'] = _imageCount.round();
+                finalParams['n_iter'] = _imageCount.round();
 
                 // 发送参数到云端，获取队列信息
 

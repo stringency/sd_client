@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,22 +18,27 @@ class Txt2ImgsResultTmp extends StatefulWidget {
 class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
   List<String> images = [];
   bool isLoading = true;
+  double progress = 0.0;
+  int jobNo = 0;
+  int jobCount = 0;
+  double etaRelative = 0.0;
+  String currentImage = '';
+  String job = '';
 
   @override
   void initState() {
     super.initState();
     generateImages();
+    checkProgress();
   }
 
   Future<void> generateImages() async {
-    final url = Uri.parse('http://192.168.123.17:7860/sdapi/v1/txt2img');
+    final url = Uri.parse("http://10.0.2.2:7860/sdapi/v1/txt2img");
     final headers = {"Content-Type": "application/json"};
     final body = jsonEncode(widget.txt2ImgsParams);
-    print(body);
 
     try {
       final response = await http.post(url, headers: headers, body: body);
-      print(response.statusCode);
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
@@ -47,9 +53,54 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
       setState(() {
         isLoading = false;
       });
-      // Handle error
-      print(e);
+      showErrorAndGoBack(e.toString());
     }
+  }
+
+  Future<void> checkProgress() async {
+    final progressUrl = Uri.parse(
+        "http://10.0.2.2:7860/sdapi/v1/progress?skip_current_image=false");
+    while (isLoading) {
+      try {
+        final response = await http.get(progressUrl);
+
+        if (response.statusCode == 200) {
+          final progressData = jsonDecode(response.body);
+          setState(() {
+            progress = progressData['progress'];
+            etaRelative = progressData['eta_relative'];
+            job = progressData['state']['job'];
+            jobNo = progressData['state']['job_no']+1;
+            jobCount = progressData['state']['job_count'];
+            currentImage = progressData['current_image'] ?? '';
+          });
+        }
+      } catch (e) {
+        print(e);
+      }
+      await Future.delayed(Duration(seconds: 1));
+    }
+  }
+
+  void showErrorAndGoBack(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text("连接错误!\n错误信息:$message"),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // 回到上一个界面
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget buildImage(String base64Image) {
@@ -98,7 +149,36 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
         title: Text("生成结果"),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Container(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 10),
+                  currentImage.isNotEmpty
+                      ? Container(
+                          height: 145.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: buildImage(currentImage),
+                          ),
+                        )
+                      : Container(
+                          height: 145.0,
+                        ),
+                  SizedBox(height: 10),
+                  CircularProgressIndicator(value: progress),
+                  SizedBox(height: 10),
+                  Text("进度: ${(progress * 100).toStringAsFixed(2)}%"),
+                  SizedBox(height: 5),
+                  Text("当前生成第 $jobNo / $jobCount 张图片"),
+                  SizedBox(height: 5),
+                  Text("预计剩余时间: ${etaRelative.toStringAsFixed(2)} 秒"),
+                  SizedBox(height: 5),
+                  Text("任务: $job"),
+                ],
+              ),
+            )
           : SingleChildScrollView(
               padding: EdgeInsets.all(16.0),
               child: Column(

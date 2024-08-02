@@ -1,5 +1,7 @@
 Map<String, String> promptTemplate ={
   "色彩鲜明":"A modern,eye-catching,poster,[a marketing exhibition:0.5],with vibrant colors,dynamic shapes,and an elegant font,The design should include elements related to technology,innovation,and business growth,(background),(panorama),",
+  "自然环境":"Create an eco-friendly event poster with soft,natural colors like green and blue,incorporating elements such as leaves,trees,and water. Use organic shapes and earthy textures to emphasize sustainability and environmental responsibility. The poster should evoke a sense of calm and connection to nature,appealing to environmentally-conscious attendees,",
+  "国风唯美":"Chinese style,[exhibition poster:0.5],the theme is Chinese culture,simple,elegant and beautiful colors,including painting,landscape,background elements,modern design style,to convey the information of inheriting Chinese culture. Title: Inheriting Chinese culture,(background),(panorama),",
   "其他":"other,",
 };
 Map<String, String> negativePromptTemplate={
