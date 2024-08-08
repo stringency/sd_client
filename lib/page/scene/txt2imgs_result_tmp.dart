@@ -33,15 +33,20 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
   }
 
   Future<void> generateImages() async {
-    final url = Uri.parse("http://10.0.2.2:7860/sdapi/v1/txt2img");
+    // final url = Uri.parse("http://10.0.2.2:7860/sdapi/v1/txt2img");
+    final url = Uri.parse("http://10.0.2.2:8000/api/1.0/paramtranTMP/");
+
     final headers = {"Content-Type": "application/json"};
     final body = jsonEncode(widget.txt2ImgsParams);
 
     try {
-      final response = await http.post(url, headers: headers, body: body);
+      // final response1 = await http.post(url, headers: headers, body: body);
+      // print("r1:${response1.body}");
+      final response2 = await http.post(url, headers: headers, body: body);
+      print("r2:${response2.body}");
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
+      if (response2.statusCode == 200) {
+        final responseData = jsonDecode(response2.body);
         setState(() {
           images = List<String>.from(responseData['images']);
           isLoading = false;
@@ -59,7 +64,9 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
 
   Future<void> checkProgress() async {
     final progressUrl = Uri.parse(
-        "http://10.0.2.2:7860/sdapi/v1/progress?skip_current_image=false");
+      // "http://10.0.2.2:7860/sdapi/v1/progress?skip_current_image=false",
+      "http://10.0.2.2:8000/api/1.0/paramtranTMP/",
+    );
     while (isLoading) {
       try {
         final response = await http.get(progressUrl);
@@ -70,7 +77,7 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
             progress = progressData['progress'];
             etaRelative = progressData['eta_relative'];
             job = progressData['state']['job'];
-            jobNo = progressData['state']['job_no']+1;
+            jobNo = progressData['state']['job_no'] + 1;
             jobCount = progressData['state']['job_count'];
             currentImage = progressData['current_image'] ?? '';
           });
@@ -179,6 +186,7 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
                 ],
               ),
             )
+          // Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: EdgeInsets.all(16.0),
               child: Column(
@@ -195,7 +203,8 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
                   Column(
                     children: images
                         .map((base64Image) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: buildImage(base64Image),
                             ))
                         .toList(),
