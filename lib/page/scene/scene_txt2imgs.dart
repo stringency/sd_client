@@ -4,7 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:sd_client/data/const_prompt.dart';
 import 'package:sd_client/data/const_txt2imgs.dart';
 import 'package:sd_client/page/mine/result/txt2imgs_result.dart';
+
 import 'package:sd_client/page/scene/txt2imgs_result_tmp.dart';
+import 'package:sd_client/tools/gpt_page.dart';
 
 class Txt2Imgs extends StatefulWidget {
   final String? selectedScene;
@@ -135,8 +137,19 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                               // width: 100.0,
                               // height: 25.0,
                               child: ElevatedButton(
-                                onPressed: () => _templateRadioDialog(
-                                    context, _controller1, "WORD", promptSug),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        contentPadding: EdgeInsets.zero,
+                                        content: GptPage(),
+                                      );
+                                    },
+                                  );
+                                  // return _templateRadioDialog(
+                                  //     context, _controller1, "WORD", promptSug);
+                                },
                                 child: Text(
                                   "提示词引导",
                                   style: TextStyle(

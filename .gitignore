@@ -44,3 +44,4 @@ app.*.map.json
 
 # My Create File
 /output/
+/lib/tools/

@@ -42,11 +42,11 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
     try {
       // final response1 = await http.post(url, headers: headers, body: body);
       // print("r1:${response1.body}");
-      final response2 = await http.post(url, headers: headers, body: body);
-      print("r2:${response2.body}");
+      final response = await http.post(url, headers: headers, body: body);
+      // print("r2:${response2.body}");
 
-      if (response2.statusCode == 200) {
-        final responseData = jsonDecode(response2.body);
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
         setState(() {
           images = List<String>.from(responseData['images']);
           isLoading = false;
