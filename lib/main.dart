@@ -1,10 +1,25 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sd_client/const.dart';
 import 'package:sd_client/root_page.dart';
 
 void main() {
+  // HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
+
+// class MyHttpOverrides extends HttpOverrides {
+//   @override
+//   HttpClient createHttpClient(SecurityContext? context) {
+//     return super.createHttpClient(context)
+//       ..findProxy = (uri) {
+//         return "PROXY 10.0.2.2:7897;";
+//       }
+//       ..badCertificateCallback =
+//           (X509Certificate cert, String host, int port) => true;
+//   }
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

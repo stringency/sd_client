@@ -7,6 +7,8 @@ import 'package:sd_client/page/mine/result/txt2imgs_result.dart';
 
 import 'package:sd_client/page/scene/txt2imgs_result_tmp.dart';
 import 'package:sd_client/tools/gpt_page.dart';
+import 'package:sd_client/tools/gpt_page2.dart';
+import 'package:sd_client/tools/gpt_page3.dart';
 
 class Txt2Imgs extends StatefulWidget {
   final String? selectedScene;
@@ -143,7 +145,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                                     builder: (BuildContext context) {
                                       return AlertDialog(
                                         contentPadding: EdgeInsets.zero,
-                                        content: GptPage(),
+                                        content: GptPage2(),
                                       );
                                     },
                                   );
