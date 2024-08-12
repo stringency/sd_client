@@ -16,6 +16,7 @@ class Txt2ImgsResultTmp extends StatefulWidget {
 }
 
 class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
+  String sdurl = "http://10.0.2.2:8000/api/1.0/txt2imgTMP/";
   List<String> images = [];
   bool isLoading = true;
   double progress = 0.0;
@@ -34,7 +35,7 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
 
   Future<void> generateImages() async {
     // final url = Uri.parse("http://10.0.2.2:7860/sdapi/v1/txt2img");
-    final url = Uri.parse("http://10.0.2.2:8000/api/1.0/paramtranTMP/");
+    final url = Uri.parse(sdurl);
 
     final headers = {"Content-Type": "application/json"};
     final body = jsonEncode(widget.txt2ImgsParams);
@@ -65,7 +66,7 @@ class _Txt2ImgsResultTmpState extends State<Txt2ImgsResultTmp> {
   Future<void> checkProgress() async {
     final progressUrl = Uri.parse(
       // "http://10.0.2.2:7860/sdapi/v1/progress?skip_current_image=false",
-      "http://10.0.2.2:8000/api/1.0/paramtranTMP/",
+      sdurl,
     );
     while (isLoading) {
       try {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sd_client/data/scene_style_imgs.dart';
+import 'package:sd_client/page/scene/img2imgs/scene_img2imgs.dart';
 import 'package:sd_client/page/scene/scene_cell.dart';
-import 'package:sd_client/page/scene/scene_txt2imgs.dart';
+import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs.dart';
+import 'package:path/path.dart' as path;
 
 class ShowSelectStyle extends StatefulWidget {
   final String sceneName;
@@ -82,12 +84,23 @@ class _ShowSelectStyleState extends State<ShowSelectStyle> {
               if (_selectedStyle != null) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => Txt2Imgs(
-                      selectedScene: widget.sceneName,
-                      selectedStyle: _selectedStyle!,
-                    ),
-                  ),
+                  MaterialPageRoute(builder: (context) {
+                    bool isTxt2img =
+                        path.basename(_selectedStyle![1]).substring(0, 3) ==
+                                "txt"
+                            ? true
+                            : false;
+                    print(isTxt2img);
+                    return isTxt2img
+                        ? Txt2Imgs(
+                            selectedScene: widget.sceneName,
+                            selectedStyle: _selectedStyle!,
+                          )
+                        : Img2Imgs(
+                            selectedScene: widget.sceneName,
+                            selectedStyle: _selectedStyle!,
+                          );
+                  }),
                 );
               } else {
                 // 弹出提示选择风格

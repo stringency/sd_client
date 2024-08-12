@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sd_client/data/scene_style_imgs.dart';
 import 'package:sd_client/page/scene/scene_cell.dart';
-import 'package:sd_client/page/scene/scene_txt2imgs.dart';
+import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs.dart';
 import 'package:sd_client/page/scene/show_select_style.dart';
 
 class ScenePage extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sd_client/page/scene/scene_txt2imgs.dart';
+import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs.dart';
 
 class SceneCell extends StatefulWidget {
   final String? sceneName;

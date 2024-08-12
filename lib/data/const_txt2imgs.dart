@@ -1,4 +1,4 @@
-const Map<String, dynamic> baseTxt2img = {
+Map<String, dynamic> baseTxt2img = {
   "prompt":
       "(masterpiece:1.2),best qualityhighres,extremely detailed CG,perfect lighting,8k wallpaper,", // 基础起手正面提示词
   "negative_prompt":
@@ -62,3 +62,5 @@ const Map<String, dynamic> baseTxt2img = {
   // 自定义参数
   // "multi_lingual":"yes",
 };
+
+

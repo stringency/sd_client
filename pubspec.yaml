@@ -40,6 +40,8 @@ dependencies:
   openai_api: ^0.3.7
   langchain: ^0.7.4
   langchain_openai: ^0.7.0
+  path: ^1.8.0
+  image_picker: ^0.8.4+4
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +69,7 @@ flutter:
   assets:
     # - images/a_dot_burr.jpeg
     - assets/images/sceneimgs/
+    - assets/images/logo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

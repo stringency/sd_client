@@ -1,33 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sd_client/data/const_img2imgs.dart';
 import 'package:sd_client/data/const_prompt.dart';
 import 'package:sd_client/data/const_txt2imgs.dart';
+import 'package:sd_client/data/scene_style_models.dart';
 import 'package:sd_client/page/mine/result/txt2imgs_result.dart';
+import 'package:sd_client/page/scene/img2imgs/img2imgs_result_tmp.dart';
 
-import 'package:sd_client/page/scene/txt2imgs_result_tmp.dart';
+import 'package:sd_client/page/scene/txt2imgs/txt2imgs_result_tmp.dart';
 import 'package:sd_client/tools/gpt_page.dart';
 import 'package:sd_client/tools/gpt_page2.dart';
 import 'package:sd_client/tools/gpt_page3.dart';
 
-class Txt2Imgs extends StatefulWidget {
+class Img2Imgs extends StatefulWidget {
   final String? selectedScene;
   final List<String>? selectedStyle;
 
-  const Txt2Imgs({
+  const Img2Imgs({
     super.key,
     required this.selectedScene,
     required this.selectedStyle,
   });
 
   @override
-  State<Txt2Imgs> createState() => _Txt2ImgsState();
+  State<Img2Imgs> createState() => _Img2ImgsState();
 }
 
-class _Txt2ImgsState extends State<Txt2Imgs> {
+class _Img2ImgsState extends State<Img2Imgs> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   bool _showAdvancedOptions = false;
+
+  // 用户的图片
+  List<String> init_images = [];
+  List<String> mask_images = [];
+  final ImagePicker _picker = ImagePicker();
 
   // 需要用户传递的参数
   // String _currPrompt = "";
@@ -73,10 +84,38 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
     );
   }
 
+  // 处理图片为base64
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      String base64Image = base64Encode(bytes);
+      // print(base64Image);
+      setState(() {
+        init_images.add(base64Image);
+      });
+    }
+  }
+
+  Future<void> _pickMaskImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      String base64Image = base64Encode(bytes);
+      // print(base64Image);
+      setState(() {
+        mask_images.add(base64Image);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String? selectedSceneName = widget.selectedScene;
     String? selectedStyleName = widget.selectedStyle?[0].toString();
+    // 切换模型
+    String? modelInfo = "$selectedSceneName$selectedStyleName";
+    // print(modelInfo);
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -92,7 +131,69 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text input fields and image preview
+              // 图片选择按钮和预览
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  width: double.infinity,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (init_images.isEmpty)
+                        Icon(
+                          Icons.add,
+                          size: 50,
+                          color: Colors.grey,
+                        )
+                      else
+                        Image.memory(
+                          base64Decode(init_images[0]),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              // 蒙版图片选择按钮和预览
+              GestureDetector(
+                onTap: _pickMaskImage,
+                child: Container(
+                  width: double.infinity,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (mask_images.isEmpty)
+                        Icon(
+                          Icons.add,
+                          size: 50,
+                          color: Colors.grey,
+                        )
+                      else
+                        Image.memory(
+                          base64Decode(mask_images[0]),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              // 提示词输入框和其他内容
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -375,14 +476,33 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
               onPressed: () {
                 // 整合参数，转为json
                 Map<String, dynamic> finalParams =
-                    Map<String, dynamic>.from(baseTxt2img);
+                    Map<String, dynamic>.from(baseImg2Imgs);
+                // 参数填充
+                // 模型更换
+                // print(modelInfos[modelInfo]?["sd_model_checkpoint"]);
+                finalParams['override_settings']['sd_model_checkpoint'] =
+                    modelInfos[modelInfo]?["sd_model_checkpoint"];
+                // 图片参数
+                finalParams['init_images'] = init_images;
+                finalParams['alwayson_scripts']['controlnet']['args'][0]
+                    ['image']['image'] = init_images[0];
+                // 蒙版参数
+                finalParams['alwayson_scripts']['controlnet']['args'][0]
+                    ['image']['mask'] = mask_images[0];
                 finalParams['prompt'] = _controller1.text.isNotEmpty
-                    ? finalParams['prompt'] + _controller1.text
+                    ? _controller1.text
                     : finalParams['prompt'];
+                // 加入lora 参数
+                finalParams['prompt'] +=
+                    modelInfos[modelInfo]?["lora"].join(",");
                 finalParams['negative_prompt'] = _controller2.text.isNotEmpty
-                    ? finalParams['negative_prompt'] + _controller2.text
+                    ? _controller2.text
                     : finalParams['negative_prompt'];
                 finalParams['n_iter'] = _imageCount.round();
+                // test
+                // finalParams['latent_mask'] = mask_images[0];
+
+                // print(finalParams);
 
                 // 发送参数到云端，获取队列信息
 
@@ -390,8 +510,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        Txt2ImgsResultTmp(txt2ImgsParams: finalParams),
+                    builder: (context) => Img2ImgsResultTmp(
+                        modelinfo: modelInfo, img2ImgsParams: finalParams),
                   ),
                 );
               },
