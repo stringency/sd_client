@@ -40,13 +40,13 @@ class _ShowSelectStyleState extends State<ShowSelectStyle> {
         )),
         content: Container(
           width: double.maxFinite,
-          height: 300,
+          height: 500,
           child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1, // 每行显示1个
+              crossAxisCount: 2, // 每行显示1个
               crossAxisSpacing: 10.0, // 两个子项之间的间隔
-              mainAxisSpacing: 8.0, // 两个子项之间的间隔
-              childAspectRatio: 1.3, // 子项宽高比
+              mainAxisSpacing: 10.0, // 两个子项之间的间隔
+              childAspectRatio: 0.4, // 子项宽高比
             ),
             itemCount: styles.length,
             itemBuilder: (context, index) {

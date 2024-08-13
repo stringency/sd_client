@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sd_client/data/const_prompt.dart';
 import 'package:sd_client/data/const_txt2imgs.dart';
-import 'package:sd_client/page/mine/result/txt2imgs_result.dart';
+import 'package:sd_client/page/mine/result/txt2img/txt2imgs_result.dart';
 
 import 'package:sd_client/page/scene/txt2imgs/txt2imgs_result_tmp.dart';
 import 'package:sd_client/tools/gpt_page.dart';

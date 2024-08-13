@@ -29,4 +29,6 @@ Map<String, String> promptTemplate = {
   "清空提示词": "",
   "产品宣传溅水花":
       "splash water,flashing particles,depth of field,clean background,",
+  "产品宣传展示台":
+      "no humans,sky,reflection,scenery,blue theme,star (sky),blue sky,starry sky,cloud,night,night sky,",
 };

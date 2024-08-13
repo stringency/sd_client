@@ -25,10 +25,10 @@ class _ScenePageState extends State<ScenePage> {
         child: GridView.builder(
           padding: const EdgeInsets.all(20.0),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 1, // 每行显示3个
+            crossAxisCount: 2, // 每行显示3个
             crossAxisSpacing: 10.0, // 两个子项之间的间隔
-            mainAxisSpacing: 8.0, // 两个子项之间的间隔
-            childAspectRatio: 1.4, // 子项宽高比
+            mainAxisSpacing: 10.0, // 两个子项之间的间隔
+            childAspectRatio: 0.52, // 子项宽高比
           ),
           itemCount: sceneInfos.length, // 模拟数据长度
           itemBuilder: (context, index) {

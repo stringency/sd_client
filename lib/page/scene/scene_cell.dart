@@ -71,12 +71,19 @@ class _SceneCellState extends State<SceneCell> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (widget.sceneImgPath != null) Image.asset(widget.sceneImgPath!),
+            if (widget.sceneImgPath != null)
+              Container(
+                // color: Colors.red,
+                child: Image.asset(widget.sceneImgPath!, height: 240),
+              ),
             const SizedBox(height: 10),
             if (widget.sceneName != null)
-              Text(
-                widget.sceneName!,
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              Container(
+                // color: Colors.red,
+                child: Text(
+                  widget.sceneName!,
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                ),
               ),
           ],
         ),

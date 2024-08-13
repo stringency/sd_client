@@ -8,7 +8,7 @@ import 'package:sd_client/data/const_img2imgs.dart';
 import 'package:sd_client/data/const_prompt.dart';
 import 'package:sd_client/data/const_txt2imgs.dart';
 import 'package:sd_client/data/scene_style_models.dart';
-import 'package:sd_client/page/mine/result/txt2imgs_result.dart';
+import 'package:sd_client/page/mine/result/txt2img/txt2imgs_result.dart';
 import 'package:sd_client/page/scene/img2imgs/img2imgs_result_tmp.dart';
 
 import 'package:sd_client/page/scene/txt2imgs/txt2imgs_result_tmp.dart';
@@ -92,7 +92,8 @@ class _Img2ImgsState extends State<Img2Imgs> {
       String base64Image = base64Encode(bytes);
       // print(base64Image);
       setState(() {
-        init_images.add(base64Image);
+          // init_images.add(base64Image);
+          init_images=[base64Image];
       });
     }
   }
@@ -104,7 +105,8 @@ class _Img2ImgsState extends State<Img2Imgs> {
       String base64Image = base64Encode(bytes);
       // print(base64Image);
       setState(() {
-        mask_images.add(base64Image);
+        // mask_images.add(base64Image);
+        mask_images=[base64Image];
       });
     }
   }
@@ -145,10 +147,17 @@ class _Img2ImgsState extends State<Img2Imgs> {
                     alignment: Alignment.center,
                     children: [
                       if (init_images.isEmpty)
-                        Icon(
-                          Icons.add,
-                          size: 50,
-                          color: Colors.grey,
+                        // Icon(
+                        //   Icons.add,
+                        //   size: 50,
+                        //   color: Colors.grey,
+                        // )
+                        Text(
+                          "原图",
+                          style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.grey,
+                          ),
                         )
                       else
                         Image.memory(
@@ -176,10 +185,17 @@ class _Img2ImgsState extends State<Img2Imgs> {
                     alignment: Alignment.center,
                     children: [
                       if (mask_images.isEmpty)
-                        Icon(
-                          Icons.add,
-                          size: 50,
-                          color: Colors.grey,
+                        // Icon(
+                        //   Icons.add,
+                        //   size: 50,
+                        //   color: Colors.grey,
+                        // ),
+                        Text(
+                          "蒙版",
+                          style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.grey,
+                          ),
                         )
                       else
                         Image.memory(
@@ -484,11 +500,11 @@ class _Img2ImgsState extends State<Img2Imgs> {
                     modelInfos[modelInfo]?["sd_model_checkpoint"];
                 // 图片参数
                 finalParams['init_images'] = init_images;
-                finalParams['alwayson_scripts']['controlnet']['args'][0]
-                    ['image']['image'] = init_images[0];
+                // finalParams['alwayson_scripts']['controlnet']['args'][0]
+                //     ['image']['image'] = init_images[0];
                 // 蒙版参数
-                finalParams['alwayson_scripts']['controlnet']['args'][0]
-                    ['image']['mask'] = mask_images[0];
+                // finalParams['alwayson_scripts']['controlnet']['args'][0]
+                //     ['image']['mask'] = mask_images[0];
                 finalParams['prompt'] = _controller1.text.isNotEmpty
                     ? _controller1.text
                     : finalParams['prompt'];
@@ -500,7 +516,8 @@ class _Img2ImgsState extends State<Img2Imgs> {
                     : finalParams['negative_prompt'];
                 finalParams['n_iter'] = _imageCount.round();
                 // test
-                // finalParams['latent_mask'] = mask_images[0];
+                // finalParams['seed'] = 3396603372;
+                // finalParams['save_images'] = true;
 
                 // print(finalParams);
 
