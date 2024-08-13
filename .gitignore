@@ -44,4 +44,5 @@ app.*.map.json
 
 # My Create File
 /output/
-/lib/tools/
+/lib/tools/gpt_page.dart
+/lib/tools/gpt_page3.dart
