@@ -1,205 +1,165 @@
 import 'package:flutter/material.dart';
-import 'package:sd_client/page/mine/mine_cell.dart';
 
 class MinePage extends StatefulWidget {
   const MinePage({super.key});
 
   @override
-  State<MinePage> createState() => _MessagePageState();
+  State<MinePage> createState() => _MinePageState();
 }
 
-class _MessagePageState extends State<MinePage> {
-  Widget headerWidget() {
-    return Container(
-      height: 200,
-      color: Colors.white,
-      child: Container(
-        margin:
-            const EdgeInsets.only(top: 100, bottom: 20, left: 20, right: 10),
-        child: Row(
-          children: [
-            Container(
-              height: 70,
-              width: 70,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: const DecorationImage(
-                  image: AssetImage("assets/images/logo/TitanLab.png"),
-                  fit: BoxFit.cover, //自动裁剪图片
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                // width: MediaQuery.of(context).size.width, // 获取屏幕宽度 - 100
-                padding: const EdgeInsets.only(
-                    left: 15, top: 8, right: 10, bottom: 15),
-                // color: Colors.red,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // 用户名
-                    Container(
-                      child: const Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "您好TitanLab设计师",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 17,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // id号
-                    Container(
-                      child: const Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "ID:1",
-                              style: TextStyle(
-                                  // fontWeight: FontWeight.w500,
-                                  fontSize: 13,
-                                  color: Colors.grey),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Icon(Icons.navigate_next),
-          ],
-        ),
-      ),
-    );
-  }
-
+class _MinePageState extends State<MinePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Color.fromRGBO(220, 220, 220, 0.5),
-        child: Stack(
-          children: [
-            // mine内容
-            Container(
-              child: MediaQuery.removePadding(
-                removeTop: true,
-                context: context,
-                child: ListView(
-                  children: [
-                    // 头部
-                    headerWidget(),
-                    const SizedBox(
-                      height: 5,
+      backgroundColor: Colors.grey[100], // Light background color
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0), // Added space to the left and right
+          child: Column(
+            children: [
+              // User Profile Section
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                margin: const EdgeInsets.only(top: 20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: Offset(0, 3), // Changes position of shadow
                     ),
-                    // 列表
-                    Column(
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
                       children: [
-                        const MineCell(
-                          iconName: Icon(Icons.mood),
-                          title: "图库",
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage: AssetImage('../../assets/images/avatar.png'), // Placeholder for avatar image
                         ),
-                        // 分割线
-                        const SizedBox(
-                          height: 5,
+                        SizedBox(width: 16),
+                        Text(
+                          'k1eran',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
-                        const MineCell(
-                          iconName: Icon(Icons.mood_bad),
-                          title: "伤心2",
-                          subTitle: "原因",
-                          subIconName: Icon(Icons.priority_high,
-                              size: 13, color: Colors.red),
-                        ),
-                        Row(
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
                           children: [
-                            Container(
-                                width: 50, height: 0.5, color: Colors.white),
-                            Container(height: 0.5, color: Colors.grey),
+                            Text(
+                              '2',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              '作品',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
                         ),
-                        const MineCell(
-                          iconName: Icon(Icons.mood),
-                          title: "开心4",
-                        ),
-                        Row(
+                        Column(
                           children: [
-                            Container(
-                                width: 50, height: 0.5, color: Colors.white),
-                            Container(height: 0.5, color: Colors.grey),
+                            Text(
+                              '12',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              '收藏',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
-                        ),
-                        const MineCell(
-                          iconName: Icon(Icons.mood_bad),
-                          title: "伤心5",
-                          subTitle: "原因",
-                          subIconName: Icon(Icons.priority_high,
-                              size: 13, color: Colors.red),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                                width: 50, height: 0.5, color: Colors.white),
-                            Container(height: 0.5, color: Colors.grey),
-                          ],
-                        ),
-                        const MineCell(
-                          iconName: Icon(Icons.mood_bad),
-                          title: "伤心伤心6",
-                          subTitle: "原因是裂开",
-                          subIconName: Icon(Icons.priority_high,
-                              size: 13, color: Colors.red),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                                width: 50, height: 0.5, color: Colors.white),
-                            Container(height: 0.5, color: Colors.grey),
-                          ],
-                        ),
-                        const MineCell(
-                          iconName: Icon(Icons.mood),
-                          title: "开心7",
-                        ),
-                        // 分割线
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        const MineCell(
-                          iconName: Icon(Icons.mood_bad),
-                          title: "伤心伤心8",
-                          subTitle: "原因是裂开",
-                          subIconName: Icon(Icons.priority_high,
-                              size: 13, color: Colors.red),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-            ),
-            // 悬浮标
-            SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    child: const Icon(Icons.self_improvement),
-                  ),
-                ],
+              SizedBox(height: 20),
+              // Menu Section
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: Offset(0, 3), // Changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    _buildMenuItem(Icons.folder, '我的文件'),
+                    _buildMenuItem(Icons.remove_red_eye, '我的浏览'),
+                    _buildMenuItem(Icons.person, '用户资料'),
+                    _buildMenuItem(Icons.settings, '设置'),
+                  ],
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 20),
+              // About Section
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: Offset(0, 3), // Changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    _buildMenuItem(Icons.info, '关于我们'),
+                    _buildMenuItem(Icons.phone, '联系我们'),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  // Menu item builder
+  Widget _buildMenuItem(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.orangeAccent),
+      title: Text(title),
+      trailing: Icon(Icons.chevron_right),
+      onTap: () {
+        // Handle the tap
+      },
     );
   }
 }
