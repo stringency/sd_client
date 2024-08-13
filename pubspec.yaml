@@ -46,8 +46,6 @@ dependencies:
   flutter_staggered_grid_view: ^0.6.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
-  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
@@ -74,8 +72,15 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     # - images/a_dot_burr.jpeg
-    - assets/images/sceneimgs/
     - assets/images/logo/
+    - assets/images/sceneimgs/
+    - assets/images/pluginimgs/
+    - assets/images/communityimgs/
+    - assets/images/homeimgs/halloween/
+    - assets/images/homeimgs/mid-autumn/
+    - assets/images/homeimgs/olym/
+    - assets/images/homeimgs/qixi/
+    - assets/images/homeimgs/slider/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

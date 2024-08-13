@@ -42,7 +42,7 @@ class _CommunityPageState extends State<CommunityPage> {
 
     for (int index = 0; index < titles.length; index++) {
       _items.add({
-        'image': '../../assets/images/communityimgs/com${(index + 1).toString().padLeft(2, '0')}.png', // Image path
+        'image': 'assets/images/communityimgs/com${(index + 1).toString().padLeft(2, '0')}.png', // Image path
         'title': titles[index],
         'likes': _random.nextInt(31), // Random like count (0-30)
         'comments': _random.nextInt(31), // Random comment count (0-30)

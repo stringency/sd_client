@@ -39,7 +39,7 @@ class _MinePageState extends State<MinePage> {
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundImage: AssetImage('../../assets/images/avatar.png'), // Placeholder for avatar image
+                          backgroundImage: AssetImage('assets/images/logo/TitanLab.png'), // Placeholder for avatar image
                         ),
                         SizedBox(width: 16),
                         Text(
