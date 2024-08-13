@@ -98,18 +98,18 @@ class _Img2ImgsState extends State<Img2Imgs> {
     }
   }
 
-  Future<void> _pickMaskImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      final bytes = await image.readAsBytes();
-      String base64Image = base64Encode(bytes);
-      // print(base64Image);
-      setState(() {
-        // mask_images.add(base64Image);
-        mask_images=[base64Image];
-      });
-    }
-  }
+  // Future<void> _pickMaskImage() async {
+  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //   if (image != null) {
+  //     final bytes = await image.readAsBytes();
+  //     String base64Image = base64Encode(bytes);
+  //     // print(base64Image);
+  //     setState(() {
+  //       // mask_images.add(base64Image);
+  //       mask_images=[base64Image];
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -172,43 +172,43 @@ class _Img2ImgsState extends State<Img2Imgs> {
               ),
               SizedBox(height: 20.0),
               // 蒙版图片选择按钮和预览
-              GestureDetector(
-                onTap: _pickMaskImage,
-                child: Container(
-                  width: double.infinity,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      if (mask_images.isEmpty)
-                        // Icon(
-                        //   Icons.add,
-                        //   size: 50,
-                        //   color: Colors.grey,
-                        // ),
-                        Text(
-                          "蒙版",
-                          style: TextStyle(
-                            fontSize: 40,
-                            color: Colors.grey,
-                          ),
-                        )
-                      else
-                        Image.memory(
-                          base64Decode(mask_images[0]),
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 20.0),
+              // GestureDetector(
+              //   onTap: _pickMaskImage,
+              //   child: Container(
+              //     width: double.infinity,
+              //     height: 150,
+              //     decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(15),
+              //       border: Border.all(color: Colors.grey),
+              //     ),
+              //     child: Stack(
+              //       alignment: Alignment.center,
+              //       children: [
+              //         if (mask_images.isEmpty)
+              //           // Icon(
+              //           //   Icons.add,
+              //           //   size: 50,
+              //           //   color: Colors.grey,
+              //           // ),
+              //           Text(
+              //             "蒙版",
+              //             style: TextStyle(
+              //               fontSize: 40,
+              //               color: Colors.grey,
+              //             ),
+              //           )
+              //         else
+              //           Image.memory(
+              //             base64Decode(mask_images[0]),
+              //             fit: BoxFit.cover,
+              //             width: double.infinity,
+              //             height: double.infinity,
+              //           ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // SizedBox(height: 20.0),
               // 提示词输入框和其他内容
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +220,7 @@ class _Img2ImgsState extends State<Img2Imgs> {
                           controller: _controller1,
                           maxLines: 5, // 增加行数
                           decoration: InputDecoration(
-                            labelText: '正面提示词',
+                            labelText: '额外提示词(选填)',
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -230,28 +230,28 @@ class _Img2ImgsState extends State<Img2Imgs> {
                           spacing: 8.0,
                           runSpacing: 8.0,
                           children: [
-                            ElevatedButton(
-                              onPressed: () => _templateRadioDialog(context,
-                                  _controller1, "TEMPLATE", promptTemplate),
-                              child: Text(
-                                "提示词模板",
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => _templateRadioDialog(
-                                  context, _controller1, "WORD", promptSug),
-                              child: Text(
-                                "提示词推荐",
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            // ElevatedButton(
+                            //   onPressed: () => _templateRadioDialog(context,
+                            //       _controller1, "TEMPLATE", promptTemplate),
+                            //   child: Text(
+                            //     "风格推荐",
+                            //     style: TextStyle(
+                            //       fontSize: 10.0,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
+                            // ElevatedButton(
+                            //   onPressed: () => _templateRadioDialog(
+                            //       context, _controller1, "WORD", promptSug),
+                            //   child: Text(
+                            //     "提示词推荐",
+                            //     style: TextStyle(
+                            //       fontSize: 10.0,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
                             Container(
                               // width: 100.0,
                               // height: 25.0,
@@ -270,7 +270,7 @@ class _Img2ImgsState extends State<Img2Imgs> {
                                   //     context, _controller1, "WORD", promptSug);
                                 },
                                 child: Text(
-                                  "提示词引导",
+                                  "提示词Bot",
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.bold,
@@ -516,7 +516,7 @@ class _Img2ImgsState extends State<Img2Imgs> {
                     : finalParams['negative_prompt'];
                 finalParams['n_iter'] = _imageCount.round();
                 // test
-                // finalParams['seed'] = 3396603372;
+                // finalParams['seed'] = 4083229531;
                 // finalParams['save_images'] = true;
 
                 // print(finalParams);
