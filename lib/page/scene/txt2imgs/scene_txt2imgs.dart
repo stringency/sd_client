@@ -29,12 +29,51 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
   final TextEditingController _controller2 = TextEditingController();
   bool _showAdvancedOptions = false;
 
+// 固定SD参数
+  Map<String, dynamic>? finalParams;
+
   // 需要用户传递的参数
   // String _currPrompt = "";
   // String _currNegativePrompt = "";
   double _imageCount = 1; // 图片数量变量
+  // 高级参数
+  double _image_cfg_scale = 1.5; // 图片缩放
+  // double _image_cfg_scale = 1.5; // 原图占比
+  double _cfg_scale = 7; // 图文关联
+  String _samplerMethod = "DPM++ 2M"; // 采样器
+  double _steps = 20.0; // 迭代步数
+  double _denoising_strength = 0.75; // 重绘强度
+  double _weight = 1; // CN权重
+  double _guidance_start = 0; // CN开始
+  double _guidance_end = 1; // CN结束
   // 最终参数
   // Map<String, dynamic> finalParams = Map<String, dynamic>.from(_baseTxt2img);
+
+  // 初始化值
+  @override
+  void initState() {
+    super.initState();
+    // print("${widget.selectedScene}${widget.selectedStyle![0]}");
+    finalParams = Map<String, dynamic>.from(
+        paramTxt2Imgs["${widget.selectedScene}${widget.selectedStyle![0]}"]);
+    _image_cfg_scale =
+        finalParams!['image_cfg_scale']; // 在 initState 方法中初始化 scene
+    // _imageZoom = finalParams!['image_cfg_scale'];
+    _cfg_scale =
+        finalParams!['cfg_scale'].toDouble(); // 在 initState 方法中初始化 scene
+    _samplerMethod = finalParams!['sampler_name']; // 在 initState 方法中初始化 scene
+    _steps = finalParams!['steps'].toDouble(); // 在 initState 方法中初始化 scene
+    _denoising_strength = finalParams!['denoising_strength'].toDouble();
+    _weight = finalParams!['alwayson_scripts']['controlnet']['args'][0]
+            ['weight']
+        .toDouble(); // 在 initState 方法中初始化 scene
+    _guidance_start = finalParams!['alwayson_scripts']['controlnet']['args'][0]
+            ['guidance_start']
+        .toDouble(); // 在 initState 方法中初始化 scene
+    _guidance_end = finalParams!['alwayson_scripts']['controlnet']['args'][0]
+            ['guidance_end']
+        .toDouble(); // 在 initState 方法中初始化 scene
+  }
 
   // 提示词选择弹出框
   void _templateRadioDialog(
@@ -305,24 +344,70 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 Row(
                   children: [
                     Text(
-                      "图片大小:",
+                      "采样器选:",
                       style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Expanded(
-                      child: Slider(
-                        value: 0.5,
-                        onChanged: (value) {},
+                    Container(
+                      padding: EdgeInsets.only(left: 80.0),
+                      child: Container(
+                        // color: Colors.red,
+                        child: PopupMenuButton<String>(
+                          initialValue: _samplerMethod,
+                          onSelected: (value) {
+                            setState(
+                              () {
+                                _samplerMethod = value; // 更新变量值
+                              },
+                            );
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return <PopupMenuEntry<String>>[
+                              PopupMenuItem<String>(
+                                value: 'DPM++ 2M',
+                                child: Text('DPM++ 2M'),
+                              ),
+                              PopupMenuItem<String>(
+                                value: 'DPM++ SDE',
+                                child: Text('DPM++ SDE'),
+                              ),
+                              PopupMenuItem<String>(
+                                value: 'Euler',
+                                child: Text('Euler'),
+                              ),
+                              PopupMenuItem<String>(
+                                value: 'Euler a',
+                                child: Text('Euler a'),
+                              ),
+                            ];
+                          },
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  _samplerMethod,
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Icon(Icons.arrow_drop_down),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 Row(
                   children: [
                     Text(
-                      "采样器的:",
+                      "原图占比:",
                       style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
@@ -330,10 +415,68 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                     ),
                     Expanded(
                       child: Slider(
-                        value: 0.5,
-                        onChanged: (value) {},
+                        min: 1.5,
+                        max: 2.5,
+                        value: _image_cfg_scale,
+                        divisions: 10, // 设定分区数为10，根据需求可调整
+                        label: _image_cfg_scale.toStringAsFixed(1), // 保留一位小数
+                        onChanged: (value) {
+                          setState(() {
+                            _image_cfg_scale = value;
+                          });
+                        },
                       ),
-                    )
+                    ),
+                  ],
+                ),
+                // Row(
+                //   children: [
+                //     Text(
+                //       "原图占比:",
+                //       style: TextStyle(
+                //         fontSize: 12.0,
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Slider(
+                //         min: 1,
+                //         max: 2,
+                //         value: _denoising_strength,
+                //         divisions: 100,
+                //         label: _denoising_strength.toStringAsFixed(2), // 保留一位小数
+                //         onChanged: (value) {
+                //           setState(() {
+                //             _denoising_strength = value;
+                //           });
+                //         },
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                Row(
+                  children: [
+                    Text(
+                      "图文关联:",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        min: 1,
+                        max: 20,
+                        value: _cfg_scale,
+                        divisions: 38,
+                        label: _cfg_scale.toStringAsFixed(1), // 保留一位小数
+                        onChanged: (value) {
+                          setState(() {
+                            _cfg_scale = value;
+                          });
+                        },
+                      ),
+                    ),
                   ],
                 ),
                 Row(
@@ -347,10 +490,118 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                     ),
                     Expanded(
                       child: Slider(
-                        value: 0.5,
-                        onChanged: (value) {},
+                        min: 20,
+                        max: 100,
+                        value: _steps,
+                        divisions: 80,
+                        label: _steps.toStringAsFixed(1), // 保留一位小数
+                        onChanged: (value) {
+                          setState(() {
+                            _steps = value;
+                          });
+                        },
                       ),
-                    )
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "重绘强度:",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        min: 0,
+                        max: 1,
+                        value: _denoising_strength,
+                        divisions: 100,
+                        label: _denoising_strength.toStringAsFixed(2), // 保留一位小数
+                        onChanged: (value) {
+                          setState(() {
+                            _denoising_strength = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "CN权重:  ",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        min: 0,
+                        max: 2,
+                        value: _weight,
+                        divisions: 40,
+                        label: _weight.toStringAsFixed(2), // 保留一位小数
+                        onChanged: (value) {
+                          setState(() {
+                            _weight = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "CN开始:  ",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        min: 0,
+                        max: 1,
+                        value: _guidance_start,
+                        divisions: 100,
+                        label: _guidance_start.toStringAsFixed(2), // 保留一位小数
+                        onChanged: (value) {
+                          setState(() {
+                            _guidance_start = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "CN结束:  ",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        min: 0,
+                        max: 1,
+                        value: _guidance_end,
+                        divisions: 100,
+                        label: _guidance_end.toStringAsFixed(2), // 保留一位小数
+                        onChanged: (value) {
+                          setState(() {
+                            _guidance_end = value;
+                          });
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -374,15 +625,15 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
               ),
               onPressed: () {
                 // 整合参数，转为json
-                Map<String, dynamic> finalParams =
-                    Map<String, dynamic>.from(baseTxt2img);
-                finalParams['prompt'] = _controller1.text.isNotEmpty
-                    ? finalParams['prompt'] + _controller1.text
-                    : finalParams['prompt'];
-                finalParams['negative_prompt'] = _controller2.text.isNotEmpty
-                    ? finalParams['negative_prompt'] + _controller2.text
-                    : finalParams['negative_prompt'];
-                finalParams['n_iter'] = _imageCount.round();
+                // Map<String, dynamic> finalParams =
+                //     Map<String, dynamic>.from(baseTxt2img);
+                finalParams!['prompt'] = _controller1.text.isNotEmpty
+                    ? finalParams!['prompt'] + _controller1.text
+                    : finalParams!['prompt'];
+                finalParams!['negative_prompt'] = _controller2.text.isNotEmpty
+                    ? finalParams!['negative_prompt'] + _controller2.text
+                    : finalParams!['negative_prompt'];
+                finalParams!['n_iter'] = _imageCount.round();
 
                 // 发送参数到云端，获取队列信息
 
@@ -391,7 +642,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        Txt2ImgsResultTmp(txt2ImgsParams: finalParams),
+                        Txt2ImgsResultTmp(txt2ImgsParams: finalParams!),
                   ),
                 );
               },
