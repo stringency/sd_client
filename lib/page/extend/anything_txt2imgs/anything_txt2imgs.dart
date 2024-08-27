@@ -1,37 +1,30 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:sd_client/data/const_prompt.dart';
 import 'package:sd_client/data/const_txt2imgs.dart';
 import 'package:sd_client/data/scene_style_models.dart';
 
 import 'package:sd_client/page/scene/txt2imgs/txt2imgs_result_tmp.dart';
 import 'package:sd_client/tools/gpt_page2.dart';
 
-class Txt2Imgs extends StatefulWidget {
+class AnythingTxt2Imgs extends StatefulWidget {
   final String? selectedScene;
   final List<String>? selectedStyle;
 
-  const Txt2Imgs({
+  const AnythingTxt2Imgs({
     super.key,
     required this.selectedScene,
     required this.selectedStyle,
   });
 
   @override
-  State<Txt2Imgs> createState() => _Txt2ImgsState();
+  State<AnythingTxt2Imgs> createState() => _AnythingTxt2ImgsState();
 }
 
-class _Txt2ImgsState extends State<Txt2Imgs> {
+class _AnythingTxt2ImgsState extends State<AnythingTxt2Imgs> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   bool _showAdvancedOptions = false;
-
-  // List<String> init_images = [];
-  // final ImagePicker _picker = ImagePicker();
 
 // 固定SD参数
   Map<String, dynamic>? finalParams;
@@ -67,15 +60,15 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
     _samplerMethod = finalParams!['sampler_name']; // 在 initState 方法中初始化 scene
     _steps = finalParams!['steps'].toDouble(); // 在 initState 方法中初始化 scene
     _denoising_strength = finalParams!['denoising_strength'].toDouble();
-    _weight = finalParams!['alwayson_scripts']['controlnet']['args'][0]
-            ['weight']
-        .toDouble(); // 在 initState 方法中初始化 scene
-    _guidance_start = finalParams!['alwayson_scripts']['controlnet']['args'][0]
-            ['guidance_start']
-        .toDouble(); // 在 initState 方法中初始化 scene
-    _guidance_end = finalParams!['alwayson_scripts']['controlnet']['args'][0]
-            ['guidance_end']
-        .toDouble(); // 在 initState 方法中初始化 scene
+    // _weight = finalParams!['alwayson_scripts']['controlnet']['args'][0]
+    //         ['weight']
+    //     .toDouble(); // 在 initState 方法中初始化 scene
+    // _guidance_start = finalParams!['alwayson_scripts']['controlnet']['args'][0]
+    //         ['guidance_start']
+    //     .toDouble(); // 在 initState 方法中初始化 scene
+    // _guidance_end = finalParams!['alwayson_scripts']['controlnet']['args'][0]
+    //         ['guidance_end']
+    //     .toDouble(); // 在 initState 方法中初始化 scene
   }
 
   // 提示词选择弹出框
@@ -114,20 +107,6 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
       },
     );
   }
-  // 处理图片为base64
-  // Future<void> _pickImage() async {
-  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-  //   if (image != null) {
-  //     final bytes = await image.readAsBytes();
-  //     String base64Image = base64Encode(bytes);
-  //     // print(base64Image);
-  //     setState(() {
-  //       // init_images.add(base64Image);
-  //       init_images = [base64Image];
-  //       print("有新图片到了！");
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -157,49 +136,11 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                   Expanded(
                     child: Column(
                       children: [
-                        // 图片选择按钮和预览
-                        // GestureDetector(
-                        //   onTap: _pickImage,
-                        //   child: Container(
-                        //     width: double.infinity,
-                        //     height: 150,
-                        //     decoration: BoxDecoration(
-                        //       borderRadius: BorderRadius.circular(15),
-                        //       border: Border.all(color: Colors.grey),
-                        //     ),
-                        //     child: Stack(
-                        //       alignment: Alignment.center,
-                        //       children: [
-                        //         if (init_images.isEmpty)
-                        //           // Icon(
-                        //           //   Icons.add,
-                        //           //   size: 50,
-                        //           //   color: Colors.grey,
-                        //           // )
-                        //           Text(
-                        //             "文字图",
-                        //             style: TextStyle(
-                        //               fontSize: 40,
-                        //               color: Colors.grey,
-                        //             ),
-                        //           )
-                        //         else
-                        //           Image.memory(
-                        //             base64Decode(init_images[0]),
-                        //             fit: BoxFit.cover,
-                        //             width: double.infinity,
-                        //             height: double.infinity,
-                        //           ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(height: 20.0),
                         TextFormField(
                           controller: _controller1,
                           maxLines: 5, // 增加行数
                           decoration: InputDecoration(
-                            labelText: '额外提示词(选填)',
+                            labelText: '一句话或者详细提示词',
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -209,28 +150,28 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                           spacing: 8.0,
                           runSpacing: 8.0,
                           children: [
-                            ElevatedButton(
-                              onPressed: () => _templateRadioDialog(context,
-                                  _controller1, "TEMPLATE", promptTemplatetest),
-                              child: Text(
-                                "图片效果",
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => _templateRadioDialog(
-                                  context, _controller1, "WORD", promptSug),
-                              child: Text(
-                                "文字模板",
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            // ElevatedButton(
+                            //   onPressed: () => _templateRadioDialog(context,
+                            //       _controller1, "TEMPLATE", promptTemplate),
+                            //   child: Text(
+                            //     "提示词模板",
+                            //     style: TextStyle(
+                            //       fontSize: 10.0,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
+                            // ElevatedButton(
+                            //   onPressed: () => _templateRadioDialog(
+                            //       context, _controller1, "WORD", promptSug),
+                            //   child: Text(
+                            //     "提示词推荐",
+                            //     style: TextStyle(
+                            //       fontSize: 10.0,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
                             Container(
                               // width: 100.0,
                               // height: 25.0,
@@ -249,7 +190,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                                   //     context, _controller1, "WORD", promptSug);
                                 },
                                 child: Text(
-                                  "提示词点这里",
+                                  "不会写提示词？点这里",
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.bold,
@@ -586,82 +527,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Text(
-                      "CN权重:  ",
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Expanded(
-                      child: Slider(
-                        min: 0,
-                        max: 2,
-                        value: _weight,
-                        divisions: 40,
-                        label: _weight.toStringAsFixed(2), // 保留一位小数
-                        onChanged: (value) {
-                          setState(() {
-                            _weight = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "CN开始:  ",
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Expanded(
-                      child: Slider(
-                        min: 0,
-                        max: 1,
-                        value: _guidance_start,
-                        divisions: 100,
-                        label: _guidance_start.toStringAsFixed(2), // 保留一位小数
-                        onChanged: (value) {
-                          setState(() {
-                            _guidance_start = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "CN结束:  ",
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Expanded(
-                      child: Slider(
-                        min: 0,
-                        max: 1,
-                        value: _guidance_end,
-                        divisions: 100,
-                        label: _guidance_end.toStringAsFixed(2), // 保留一位小数
-                        onChanged: (value) {
-                          setState(() {
-                            _guidance_end = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
             ],
           ),
         ),
@@ -702,8 +568,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                     ? finalParams!['prompt'] + _controller1.text
                     : finalParams!['prompt'];
                 // 加入lora 参数
-                finalParams!['prompt'] +=
-                    modelInfos[modelInfo]?["lora"].join(",");
+                // finalParams!['prompt'] +=
+                //     modelInfos[modelInfo]?["lora"].join(",");
                 // finalParams!['negative_prompt'] = _controller2.text.isNotEmpty
                 //     ? _controller2.text
                 //     : finalParams!['negative_prompt'];
@@ -720,18 +586,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 finalParams!['steps'] = _steps;
                 // 重绘强度
                 finalParams!['denoising_strength'] = _denoising_strength;
-                // CN传图
-                // finalParams!['alwayson_scripts']['controlnet']['args'][0]
-                //     ['image'] = init_images[0];
-                // CN权重
-                finalParams!['alwayson_scripts']['controlnet']['args'][0]
-                    ['weight'] = _weight;
-                // CN开始
-                finalParams!['alwayson_scripts']['controlnet']['args'][0]
-                    ['guidance_start'] = _guidance_start;
-                // CN结束
-                finalParams!['alwayson_scripts']['controlnet']['args'][0]
-                    ['guidance_end'] = _guidance_end;
+                
                 // test
                 // seed:
                 // finalParams!['seed'] = -1;

@@ -1,39 +1,47 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sd_client/data/const_img2imgs.dart';
 import 'package:sd_client/data/const_prompt.dart';
 import 'package:sd_client/data/const_txt2imgs.dart';
 import 'package:sd_client/data/scene_style_models.dart';
+import 'package:sd_client/page/mine/result/txt2img/txt2imgs_result.dart';
+import 'package:sd_client/page/scene/img2imgs/img2imgs_result_tmp.dart';
 
 import 'package:sd_client/page/scene/txt2imgs/txt2imgs_result_tmp.dart';
+import 'package:sd_client/tools/gpt_page.dart';
 import 'package:sd_client/tools/gpt_page2.dart';
+import 'package:sd_client/tools/gpt_page3.dart';
 
-class Txt2Imgs extends StatefulWidget {
+class Img2Imgs extends StatefulWidget {
   final String? selectedScene;
   final List<String>? selectedStyle;
 
-  const Txt2Imgs({
+  const Img2Imgs({
     super.key,
     required this.selectedScene,
     required this.selectedStyle,
   });
 
   @override
-  State<Txt2Imgs> createState() => _Txt2ImgsState();
+  State<Img2Imgs> createState() => _Img2ImgsState();
 }
 
-class _Txt2ImgsState extends State<Txt2Imgs> {
+class _Img2ImgsState extends State<Img2Imgs> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   bool _showAdvancedOptions = false;
 
-  // List<String> init_images = [];
-  // final ImagePicker _picker = ImagePicker();
+  // 用户的图片
+  List<String> init_images = [];
+  List<String> mask_images = [];
+  final ImagePicker _picker = ImagePicker();
 
-// 固定SD参数
+  // 固定SD参数
   Map<String, dynamic>? finalParams;
 
   // 需要用户传递的参数
@@ -41,7 +49,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
   // String _currNegativePrompt = "";
   double _imageCount = 1; // 图片数量变量
   // 高级参数
-  // double _image_cfg_scale = 1.5; // 图片缩放
+  double _image_cfg_scale = 1.5; // 图片缩放
   // double _image_cfg_scale = 1.5; // 原图占比
   double _cfg_scale = 7; // 图文关联
   String _samplerMethod = "DPM++ 2M"; // 采样器
@@ -57,10 +65,11 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
   @override
   void initState() {
     super.initState();
-    print("${widget.selectedScene}${widget.selectedStyle![0]}");
+    // print("${widget.selectedScene}${widget.selectedStyle![0]}");
     finalParams = Map<String, dynamic>.from(
-        paramTxt2Imgs["${widget.selectedScene}${widget.selectedStyle![0]}"]);
-
+        paramImg2Imgs["${widget.selectedScene}${widget.selectedStyle![0]}"]);
+    _image_cfg_scale =
+        finalParams!['image_cfg_scale']; // 在 initState 方法中初始化 scene
     // _imageZoom = finalParams!['image_cfg_scale'];
     _cfg_scale =
         finalParams!['cfg_scale'].toDouble(); // 在 initState 方法中初始化 scene
@@ -114,17 +123,30 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
       },
     );
   }
+
   // 处理图片为base64
-  // Future<void> _pickImage() async {
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      String base64Image = base64Encode(bytes);
+      // print(base64Image);
+      setState(() {
+        // init_images.add(base64Image);
+        init_images = [base64Image];
+      });
+    }
+  }
+
+  // Future<void> _pickMaskImage() async {
   //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
   //   if (image != null) {
   //     final bytes = await image.readAsBytes();
   //     String base64Image = base64Encode(bytes);
   //     // print(base64Image);
   //     setState(() {
-  //       // init_images.add(base64Image);
-  //       init_images = [base64Image];
-  //       print("有新图片到了！");
+  //       // mask_images.add(base64Image);
+  //       mask_images=[base64Image];
   //     });
   //   }
   // }
@@ -135,6 +157,10 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
     String? selectedStyleName = widget.selectedStyle?[0].toString();
     // 切换模型
     String? modelInfo = "$selectedSceneName$selectedStyleName";
+    // print(modelInfo);
+
+    // _steps = finalParams["steps"].toDouble();
+    // print(_steps);
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -150,51 +176,89 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text input fields and image preview
+              // 图片选择按钮和预览
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  width: double.infinity,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (init_images.isEmpty)
+                        // Icon(
+                        //   Icons.add,
+                        //   size: 50,
+                        //   color: Colors.grey,
+                        // )
+                        Text(
+                          "原图",
+                          style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.grey,
+                          ),
+                        )
+                      else
+                        Image.memory(
+                          base64Decode(init_images[0]),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.0),
+              // 蒙版图片选择按钮和预览
+              // GestureDetector(
+              //   onTap: _pickMaskImage,
+              //   child: Container(
+              //     width: double.infinity,
+              //     height: 150,
+              //     decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(15),
+              //       border: Border.all(color: Colors.grey),
+              //     ),
+              //     child: Stack(
+              //       alignment: Alignment.center,
+              //       children: [
+              //         if (mask_images.isEmpty)
+              //           // Icon(
+              //           //   Icons.add,
+              //           //   size: 50,
+              //           //   color: Colors.grey,
+              //           // ),
+              //           Text(
+              //             "蒙版",
+              //             style: TextStyle(
+              //               fontSize: 40,
+              //               color: Colors.grey,
+              //             ),
+              //           )
+              //         else
+              //           Image.memory(
+              //             base64Decode(mask_images[0]),
+              //             fit: BoxFit.cover,
+              //             width: double.infinity,
+              //             height: double.infinity,
+              //           ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // SizedBox(height: 20.0),
+              // 提示词输入框和其他内容
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
                       children: [
-                        // 图片选择按钮和预览
-                        // GestureDetector(
-                        //   onTap: _pickImage,
-                        //   child: Container(
-                        //     width: double.infinity,
-                        //     height: 150,
-                        //     decoration: BoxDecoration(
-                        //       borderRadius: BorderRadius.circular(15),
-                        //       border: Border.all(color: Colors.grey),
-                        //     ),
-                        //     child: Stack(
-                        //       alignment: Alignment.center,
-                        //       children: [
-                        //         if (init_images.isEmpty)
-                        //           // Icon(
-                        //           //   Icons.add,
-                        //           //   size: 50,
-                        //           //   color: Colors.grey,
-                        //           // )
-                        //           Text(
-                        //             "文字图",
-                        //             style: TextStyle(
-                        //               fontSize: 40,
-                        //               color: Colors.grey,
-                        //             ),
-                        //           )
-                        //         else
-                        //           Image.memory(
-                        //             base64Decode(init_images[0]),
-                        //             fit: BoxFit.cover,
-                        //             width: double.infinity,
-                        //             height: double.infinity,
-                        //           ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(height: 20.0),
                         TextFormField(
                           controller: _controller1,
                           maxLines: 5, // 增加行数
@@ -209,28 +273,28 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                           spacing: 8.0,
                           runSpacing: 8.0,
                           children: [
-                            ElevatedButton(
-                              onPressed: () => _templateRadioDialog(context,
-                                  _controller1, "TEMPLATE", promptTemplatetest),
-                              child: Text(
-                                "图片效果",
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => _templateRadioDialog(
-                                  context, _controller1, "WORD", promptSug),
-                              child: Text(
-                                "文字模板",
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            // ElevatedButton(
+                            //   onPressed: () => _templateRadioDialog(context,
+                            //       _controller1, "TEMPLATE", promptTemplate),
+                            //   child: Text(
+                            //     "风格推荐",
+                            //     style: TextStyle(
+                            //       fontSize: 10.0,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
+                            // ElevatedButton(
+                            //   onPressed: () => _templateRadioDialog(
+                            //       context, _controller1, "WORD", promptSug),
+                            //   child: Text(
+                            //     "提示词推荐",
+                            //     style: TextStyle(
+                            //       fontSize: 10.0,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // ),
                             Container(
                               // width: 100.0,
                               // height: 25.0,
@@ -249,7 +313,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                                   //     context, _controller1, "WORD", promptSug);
                                 },
                                 child: Text(
-                                  "提示词点这里",
+                                  "不会写提示词？点这里",
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.bold,
@@ -340,7 +404,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                       max: 8,
                       value: _imageCount,
                       divisions: 7,
-                      label: _imageCount.round().toString(),
+                      label: _imageCount.toString(),
                       onChanged: (value) {
                         setState(() {
                           _imageCount = value;
@@ -387,13 +451,15 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
 
               // Toggle for advanced options
               SizedBox(height: 16.0),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _showAdvancedOptions = !_showAdvancedOptions;
-                  });
-                },
-                child: Text(_showAdvancedOptions ? '隐藏高级选项' : '显示高级选项'),
+              Container(
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _showAdvancedOptions = !_showAdvancedOptions;
+                    });
+                  },
+                  child: Text(_showAdvancedOptions ? '隐藏高级选项' : '显示高级选项'),
+                ),
               ),
 
               // Advanced options
@@ -461,31 +527,31 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                     ),
                   ],
                 ),
-                // Row(
-                //   children: [
-                //     Text(
-                //       "原图占比:",
-                //       style: TextStyle(
-                //         fontSize: 12.0,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //     Expanded(
-                //       child: Slider(
-                //         min: 1.5,
-                //         max: 2.5,
-                //         value: _image_cfg_scale,
-                //         divisions: 10, // 设定分区数为10，根据需求可调整
-                //         label: _image_cfg_scale.toStringAsFixed(1), // 保留一位小数
-                //         onChanged: (value) {
-                //           setState(() {
-                //             _image_cfg_scale = value;
-                //           });
-                //         },
-                //       ),
-                //     ),
-                //   ],
-                // ),
+                Row(
+                  children: [
+                    Text(
+                      "原图占比:",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Slider(
+                        min: 1.5,
+                        max: 2.5,
+                        value: _image_cfg_scale,
+                        divisions: 10, // 设定分区数为10，根据需求可调整
+                        label: _image_cfg_scale.toStringAsFixed(1), // 保留一位小数
+                        onChanged: (value) {
+                          setState(() {
+                            _image_cfg_scale = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
                 // Row(
                 //   children: [
                 //     Text(
@@ -688,41 +754,34 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 // print(modelInfos[modelInfo]?["sd_model_checkpoint"]);
                 finalParams!['override_settings']['sd_model_checkpoint'] =
                     modelInfos[modelInfo]?["sd_model_checkpoint"];
-                // vae模型更换
-                finalParams!['override_settings']['sd_vae'] =
-                    modelInfos[modelInfo]?["sd_vae"];
                 // 图片参数
-                // finalParams!['init_images'] = init_images;
+                finalParams!['init_images'] = init_images;
                 // finalParams['alwayson_scripts']['controlnet']['args'][0]
                 //     ['image']['image'] = init_images[0];
                 // 蒙版参数
-                // finalParams['alwayson_scripts']['controlnet']['args'][0]
-                //     ['image']['mask'] = mask_images[0];
+                // finalParams!['mask'] = mask_images[0];
                 finalParams!['prompt'] = _controller1.text.isNotEmpty
                     ? finalParams!['prompt'] + _controller1.text
                     : finalParams!['prompt'];
                 // 加入lora 参数
                 finalParams!['prompt'] +=
                     modelInfos[modelInfo]?["lora"].join(",");
-                // finalParams!['negative_prompt'] = _controller2.text.isNotEmpty
-                //     ? _controller2.text
-                //     : finalParams!['negative_prompt'];
+                finalParams!['negative_prompt'] = _controller2.text.isNotEmpty
+                    ? _controller2.text
+                    : finalParams!['negative_prompt'];
                 finalParams!['n_iter'] = _imageCount;
                 // 高级选项
                 // 采样器
                 finalParams!['sampler_name'] = _samplerMethod;
                 finalParams!['sampler_index'] = _samplerMethod;
                 // 原图占比
-                // finalParams!['image_cfg_scale'] = _image_cfg_scale;
+                finalParams!['image_cfg_scale'] = _image_cfg_scale;
                 // 图文关联
                 finalParams!['cfg_scale'] = _cfg_scale;
                 // 迭代步数
                 finalParams!['steps'] = _steps;
                 // 重绘强度
                 finalParams!['denoising_strength'] = _denoising_strength;
-                // CN传图
-                // finalParams!['alwayson_scripts']['controlnet']['args'][0]
-                //     ['image'] = init_images[0];
                 // CN权重
                 finalParams!['alwayson_scripts']['controlnet']['args'][0]
                     ['weight'] = _weight;
@@ -733,8 +792,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 finalParams!['alwayson_scripts']['controlnet']['args'][0]
                     ['guidance_end'] = _guidance_end;
                 // test
-                // seed:
-                // finalParams!['seed'] = -1;
+                // seed:617961886/404403966
+                finalParams!['seed'] = 617961886;
                 // finalParams['save_images'] = true;
 
                 // print(finalParams);
@@ -745,12 +804,12 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        Txt2ImgsResultTmp(txt2ImgsParams: finalParams!),
+                    builder: (context) => Img2ImgsResultTmp(
+                        modelinfo: modelInfo, img2ImgsParams: finalParams!),
                   ),
                 ).then((value) {
                   setState(() {
-                    finalParams = Map.from(paramTxt2Imgs[
+                    finalParams = Map.from(paramImg2Imgs[
                         "${widget.selectedScene}${widget.selectedStyle![0]}"]);
                   });
                 });

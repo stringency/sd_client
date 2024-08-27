@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sd_client/page/extend/anything_txt2imgs/anything_txt2imgs.dart';
 
 class ExtendPage extends StatefulWidget {
   const ExtendPage({super.key});
@@ -25,7 +26,7 @@ class _ExtendPageState extends State<ExtendPage> {
     },
     {
       'image': 'assets/images/pluginimgs/plugin03.png',
-      'title': 'AI 修图',
+      'title': '万能生图',
       'rating': 4.8,
       'reviews': '76', // Adjusted to a realistic number (1-99)
       'description': '通过AI技术，轻松修图，让照片更完美。',
@@ -66,6 +67,17 @@ class _ExtendPageState extends State<ExtendPage> {
       onTap: () {
         // Handle card tap action
         print('Tapped on ${plugin['title']}');
+        if (plugin['title'] == '万能生图') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return AnythingTxt2Imgs(
+                selectedScene: "文生图",
+                selectedStyle: ["万能版"],
+              );
+            }),
+          );
+        }
       },
       borderRadius: BorderRadius.circular(15.0),
       child: Card(

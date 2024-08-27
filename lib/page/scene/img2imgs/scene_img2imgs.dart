@@ -134,6 +134,7 @@ class _Img2ImgsState extends State<Img2Imgs> {
       setState(() {
         // init_images.add(base64Image);
         init_images = [base64Image];
+        print("有新图片到了！");
       });
     }
   }
@@ -538,7 +539,7 @@ class _Img2ImgsState extends State<Img2Imgs> {
                     ),
                     Expanded(
                       child: Slider(
-                        min: 1.5,
+                        min: 1.0,
                         max: 2.5,
                         value: _image_cfg_scale,
                         divisions: 10, // 设定分区数为10，根据需求可调整
@@ -759,17 +760,16 @@ class _Img2ImgsState extends State<Img2Imgs> {
                 // finalParams['alwayson_scripts']['controlnet']['args'][0]
                 //     ['image']['image'] = init_images[0];
                 // 蒙版参数
-                // finalParams['alwayson_scripts']['controlnet']['args'][0]
-                //     ['image']['mask'] = mask_images[0];
+                // finalParams!['mask'] = mask_images[0];
                 finalParams!['prompt'] = _controller1.text.isNotEmpty
                     ? finalParams!['prompt'] + _controller1.text
                     : finalParams!['prompt'];
                 // 加入lora 参数
                 finalParams!['prompt'] +=
                     modelInfos[modelInfo]?["lora"].join(",");
-                finalParams!['negative_prompt'] = _controller2.text.isNotEmpty
-                    ? _controller2.text
-                    : finalParams!['negative_prompt'];
+                // finalParams!['negative_prompt'] = _controller2.text.isNotEmpty
+                //     ? _controller2.text
+                //     : finalParams!['negative_prompt'];
                 finalParams!['n_iter'] = _imageCount;
                 // 高级选项
                 // 采样器
@@ -793,8 +793,19 @@ class _Img2ImgsState extends State<Img2Imgs> {
                 finalParams!['alwayson_scripts']['controlnet']['args'][0]
                     ['guidance_end'] = _guidance_end;
                 // test
-                // finalParams['seed'] = 4083229531;
+                // 精华液
+                // seed:617961886/404403966
+                // seed:2774175756
+                // seed:3359989422/978727921/734363979
+                // 手机
+                // seed:290931493
+                // seed:
+                // seed:2893915735
+                // 金色特殊
+                // seed:1727675265
+                // finalParams!['seed'] = 1727675265;
                 // finalParams['save_images'] = true;
+                
 
                 // print(finalParams);
 

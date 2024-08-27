@@ -4,6 +4,10 @@ import 'package:sd_client/page/scene/img2imgs/scene_img2imgs.dart';
 import 'package:sd_client/page/scene/scene_cell.dart';
 import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs.dart';
 import 'package:path/path.dart' as path;
+import 'package:http/http.dart' as http;
+import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs1.dart';
+import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs2.dart';
+import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs3.dart';
 
 class ShowSelectStyle extends StatefulWidget {
   final String sceneName;
@@ -22,6 +26,21 @@ class ShowSelectStyle extends StatefulWidget {
 class _ShowSelectStyleState extends State<ShowSelectStyle> {
   int? _selectedStyleIndex;
   List<String>? _selectedStyle;
+
+  // 重置bot
+  Future<void> _sendCancelRequest() async {
+    final url = Uri.parse('http://10.0.2.2:8000/api/1.0/gptbotcancel/');
+    try {
+      final response = await http.post(url);
+      if (response.statusCode == 200) {
+        print('Cancel request sent successfully');
+      } else {
+        print('Failed to send cancel request');
+      }
+    } catch (e) {
+      print('Error sending cancel request: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +111,7 @@ class _ShowSelectStyleState extends State<ShowSelectStyle> {
                             : false;
                     print(isTxt2img);
                     return isTxt2img
-                        ? Txt2Imgs(
+                        ? Txt2Imgs3(
                             selectedScene: widget.sceneName,
                             selectedStyle: _selectedStyle!,
                           )
@@ -101,7 +120,9 @@ class _ShowSelectStyleState extends State<ShowSelectStyle> {
                             selectedStyle: _selectedStyle!,
                           );
                   }),
-                );
+                ).then((value) {
+                    _sendCancelRequest();
+                });
               } else {
                 // 弹出提示选择风格
                 showDialog(

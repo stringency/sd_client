@@ -1,37 +1,32 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:sd_client/data/const_prompt.dart';
 import 'package:sd_client/data/const_txt2imgs.dart';
 import 'package:sd_client/data/scene_style_models.dart';
 
 import 'package:sd_client/page/scene/txt2imgs/txt2imgs_result_tmp.dart';
+import 'package:sd_client/page/scene/txt2imgs/txt2imgs_result_tmp2.dart';
 import 'package:sd_client/tools/gpt_page2.dart';
 
-class Txt2Imgs extends StatefulWidget {
+class Txt2Imgs1 extends StatefulWidget {
   final String? selectedScene;
   final List<String>? selectedStyle;
 
-  const Txt2Imgs({
+  const Txt2Imgs1({
     super.key,
     required this.selectedScene,
     required this.selectedStyle,
   });
 
   @override
-  State<Txt2Imgs> createState() => _Txt2ImgsState();
+  State<Txt2Imgs1> createState() => _Txt2Imgs1State();
 }
 
-class _Txt2ImgsState extends State<Txt2Imgs> {
+class _Txt2Imgs1State extends State<Txt2Imgs1> {
   final TextEditingController _controller1 = TextEditingController();
   final TextEditingController _controller2 = TextEditingController();
   bool _showAdvancedOptions = false;
-
-  // List<String> init_images = [];
-  // final ImagePicker _picker = ImagePicker();
 
 // 固定SD参数
   Map<String, dynamic>? finalParams;
@@ -60,7 +55,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
     print("${widget.selectedScene}${widget.selectedStyle![0]}");
     finalParams = Map<String, dynamic>.from(
         paramTxt2Imgs["${widget.selectedScene}${widget.selectedStyle![0]}"]);
-
+    
     // _imageZoom = finalParams!['image_cfg_scale'];
     _cfg_scale =
         finalParams!['cfg_scale'].toDouble(); // 在 initState 方法中初始化 scene
@@ -76,6 +71,8 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
     _guidance_end = finalParams!['alwayson_scripts']['controlnet']['args'][0]
             ['guidance_end']
         .toDouble(); // 在 initState 方法中初始化 scene
+
+    _controller1.text = finalParams!['prompt'];
   }
 
   // 提示词选择弹出框
@@ -114,20 +111,6 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
       },
     );
   }
-  // 处理图片为base64
-  // Future<void> _pickImage() async {
-  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-  //   if (image != null) {
-  //     final bytes = await image.readAsBytes();
-  //     String base64Image = base64Encode(bytes);
-  //     // print(base64Image);
-  //     setState(() {
-  //       // init_images.add(base64Image);
-  //       init_images = [base64Image];
-  //       print("有新图片到了！");
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -157,44 +140,6 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                   Expanded(
                     child: Column(
                       children: [
-                        // 图片选择按钮和预览
-                        // GestureDetector(
-                        //   onTap: _pickImage,
-                        //   child: Container(
-                        //     width: double.infinity,
-                        //     height: 150,
-                        //     decoration: BoxDecoration(
-                        //       borderRadius: BorderRadius.circular(15),
-                        //       border: Border.all(color: Colors.grey),
-                        //     ),
-                        //     child: Stack(
-                        //       alignment: Alignment.center,
-                        //       children: [
-                        //         if (init_images.isEmpty)
-                        //           // Icon(
-                        //           //   Icons.add,
-                        //           //   size: 50,
-                        //           //   color: Colors.grey,
-                        //           // )
-                        //           Text(
-                        //             "文字图",
-                        //             style: TextStyle(
-                        //               fontSize: 40,
-                        //               color: Colors.grey,
-                        //             ),
-                        //           )
-                        //         else
-                        //           Image.memory(
-                        //             base64Decode(init_images[0]),
-                        //             fit: BoxFit.cover,
-                        //             width: double.infinity,
-                        //             height: double.infinity,
-                        //           ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(height: 20.0),
                         TextFormField(
                           controller: _controller1,
                           maxLines: 5, // 增加行数
@@ -698,9 +643,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 // 蒙版参数
                 // finalParams['alwayson_scripts']['controlnet']['args'][0]
                 //     ['image']['mask'] = mask_images[0];
-                finalParams!['prompt'] = _controller1.text.isNotEmpty
-                    ? finalParams!['prompt'] + _controller1.text
-                    : finalParams!['prompt'];
+                finalParams!['prompt'] = _controller1.text;
                 // 加入lora 参数
                 finalParams!['prompt'] +=
                     modelInfos[modelInfo]?["lora"].join(",");
@@ -720,9 +663,6 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                 finalParams!['steps'] = _steps;
                 // 重绘强度
                 finalParams!['denoising_strength'] = _denoising_strength;
-                // CN传图
-                // finalParams!['alwayson_scripts']['controlnet']['args'][0]
-                //     ['image'] = init_images[0];
                 // CN权重
                 finalParams!['alwayson_scripts']['controlnet']['args'][0]
                     ['weight'] = _weight;
@@ -746,7 +686,7 @@ class _Txt2ImgsState extends State<Txt2Imgs> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        Txt2ImgsResultTmp(txt2ImgsParams: finalParams!),
+                        Txt2ImgsResultTmp2(txt2ImgsParams: finalParams!),
                   ),
                 ).then((value) {
                   setState(() {
