@@ -13,6 +13,7 @@
         {"宫崎骏": "assets/images/sceneimgs/txt11.png"},
         {"中国龙": "assets/images/sceneimgs/txt12.png"},
         {"海报图": "assets/images/sceneimgs/txt13.png"},
+        {"中国移动": "assets/images/sceneimgs/txt14.png"},
       ]
     },
     {

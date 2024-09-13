@@ -179,7 +179,8 @@ class _Txt2ImgsResultTmp2State extends State<Txt2ImgsResultTmp2> {
                   // String imagePath1 = "assets/images/sceneimgs/txt11.png";
                   // String imagePath2 = "assets/images/sceneimgs/txt12res.png";
                   // String imagePath3 = "assets/images/sceneimgs/txt13res.png";
-                  Image.asset("assets/images/sceneimgs/txt13res.png", width: 340),
+                  // String imagePath3 = "assets/images/sceneimgs/txt14res.png";
+                  Image.asset("assets/images/sceneimgs/txt14res.png", width: 340),
 
                   SizedBox(height: 20),
                   Text(

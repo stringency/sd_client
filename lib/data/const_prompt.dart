@@ -38,4 +38,6 @@ Map<String, String> promptTemplate = {
       "(1 dragon:1.5),break,chinese New Year celebration poster,traditional style,festive and joyful atmosphere, red lanterns,",
   "营销展会海报图":
       "DDicon,Transparent Blue,no humans,sky,cloud,scenery,outdoors,linear,line,[runway::cityscape:0.5],magnificent_architecture,blue sky,sun,sunlight,skyscraper,cloudy sky,day,lens flare,cover,",
+  "营销展会中国移动":
+      "Minimalist cartoon style,UNI-APP business application theme,clean and simple design,clear lines,fresh and airy feel,dark blue background,high contrast  elements,distinct and well-defined features,tech-inspired icons,well-organized layout,high quality,web cover,",
 };

@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs1.dart';
 import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs2.dart';
 import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs3.dart';
+import 'package:sd_client/page/scene/txt2imgs/scene_txt2imgs4.dart';
 
 class ShowSelectStyle extends StatefulWidget {
   final String sceneName;
@@ -111,7 +112,7 @@ class _ShowSelectStyleState extends State<ShowSelectStyle> {
                             : false;
                     print(isTxt2img);
                     return isTxt2img
-                        ? Txt2Imgs3(
+                        ? Txt2Imgs4(
                             selectedScene: widget.sceneName,
                             selectedStyle: _selectedStyle!,
                           )

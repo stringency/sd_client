@@ -20,6 +20,11 @@ const Map<String, Map<String, dynamic>> modelInfos = {
     "sd_vae": "Automatic",
     "lora": [",<lora:DDicon:0.5>,"]
   },
+  '营销展会中国移动': {
+    "sd_model_checkpoint": "dreamshaper_8.safetensors [879db523c3]",
+    "sd_vae": "Automatic",
+    "lora": [",<lora:ChinaMobile:1.5>,"]
+  },
   '产品宣传溅水花': {
     "sd_model_checkpoint": "dreamshaper_8.safetensors [879db523c3]",
     "lora": [",<lora:20240113-1705136141854:1>,"]
