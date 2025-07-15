@@ -16,7 +16,7 @@ class Txt2ImgsResultTmp2 extends StatefulWidget {
 }
 
 class _Txt2ImgsResultTmp2State extends State<Txt2ImgsResultTmp2> {
-  // String sdurl = "http://10.0.2.2:8000/api/1.0/txt2imgTMP/";
+  // String sdurl = "http://10.105.164.201:8000/api/1.0/txt2imgTMP/";
   List<String> images = [];
   String imagePath = "assets/images/sceneimgs/txt11.png";
   String imagePath2 = "assets/images/sceneimgs/txt13res.png";
@@ -36,7 +36,7 @@ class _Txt2ImgsResultTmp2State extends State<Txt2ImgsResultTmp2> {
   }
 
   Future<void> generateImages() async {
-    // final url = Uri.parse("http://10.0.2.2:7860/sdapi/v1/txt2img");
+    // final url = Uri.parse("http://10.105.164.201:7860/sdapi/v1/txt2img");
     // final url = Uri.parse(sdurl);
 
     final headers = {"Content-Type": "application/json"};
@@ -69,7 +69,7 @@ class _Txt2ImgsResultTmp2State extends State<Txt2ImgsResultTmp2> {
 
   Future<void> checkProgress() async {
     // final progressUrl = Uri.parse(
-    //   // "http://10.0.2.2:7860/sdapi/v1/progress?skip_current_image=false",
+    //   // "http://10.105.164.201:7860/sdapi/v1/progress?skip_current_image=false",
     //   sdurl,
     // );
     while (isLoading) {

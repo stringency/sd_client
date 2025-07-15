@@ -762,7 +762,7 @@ class _Img2ImgsState extends State<Img2Imgs> {
                 // 蒙版参数
                 // finalParams!['mask'] = mask_images[0];
                 finalParams!['prompt'] = _controller1.text.isNotEmpty
-                    ? finalParams!['prompt'] + _controller1.text
+                    ? _controller1.text + "," + finalParams!['prompt']
                     : finalParams!['prompt'];
                 // 加入lora 参数
                 finalParams!['prompt'] +=
@@ -805,7 +805,6 @@ class _Img2ImgsState extends State<Img2Imgs> {
                 // seed:1727675265
                 // finalParams!['seed'] = 1727675265;
                 // finalParams['save_images'] = true;
-                
 
                 // print(finalParams);
 
@@ -815,8 +814,8 @@ class _Img2ImgsState extends State<Img2Imgs> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Img2ImgsResultTmp(
-                        modelinfo: modelInfo, img2ImgsParams: finalParams!),
+                    builder: (context) =>
+                        Img2ImgsResultTmp(finalParams: finalParams!),
                   ),
                 ).then((value) {
                   setState(() {

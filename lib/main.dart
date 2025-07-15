@@ -1,12 +1,19 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sd_client/const.dart';
 import 'package:sd_client/root_page.dart';
+import 'package:sd_client/login_page.dart'; // 引入登录页
 
-void main() {
-  // HttpOverrides.global = MyHttpOverrides();
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Permission.storage.isGranted; // 确保权限插件初始化
+  final prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('token');
+
+  runApp(MyApp(isLoggedIn: token != null));
 }
 
 // class MyHttpOverrides extends HttpOverrides {
@@ -14,7 +21,7 @@ void main() {
 //   HttpClient createHttpClient(SecurityContext? context) {
 //     return super.createHttpClient(context)
 //       ..findProxy = (uri) {
-//         return "PROXY 10.0.2.2:7897;";
+//         return "PROXY 10.105.164.201:7897;";
 //       }
 //       ..badCertificateCallback =
 //           (X509Certificate cert, String host, int port) => true;
@@ -22,7 +29,9 @@ void main() {
 // }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+
+  const MyApp({super.key, required this.isLoggedIn});
 
   // This widget is the root of your application.
   @override
@@ -54,7 +63,10 @@ class MyApp extends StatelessWidget {
           titleTextStyle: TextStyle(color: Colors.black, fontSize: 15),
         ),
       ),
-      home: const RootPage(),
+      home: isLoggedIn ? const RootPage() : const LoginPage(),
+      routes: {
+        '/login': (context) => LoginPage(), // 确保这里有一个 LoginPage 组件
+      },
     );
   }
 }

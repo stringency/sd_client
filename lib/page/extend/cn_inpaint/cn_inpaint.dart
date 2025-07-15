@@ -804,8 +804,8 @@ class _Img2ImgsState extends State<Img2Imgs> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Img2ImgsResultTmp(
-                        modelinfo: modelInfo, img2ImgsParams: finalParams!),
+                    builder: (context) =>
+                        Img2ImgsResultTmp(finalParams: finalParams!),
                   ),
                 ).then((value) {
                   setState(() {

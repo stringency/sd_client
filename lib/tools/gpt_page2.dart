@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 /** 后端GPT Bot接入*/
 class GptPage2 extends StatefulWidget {
@@ -11,9 +12,9 @@ class GptPage2 extends StatefulWidget {
 
 class _GptPage2State extends State<GptPage2> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, String>> _messages = [];
+  final List<Map<String, String>> _messages = [{'role': 'bot', 'content': "您好！请告诉我您想生成的图像类型。您可以简单描述它，比如：‘我想要一张关于未来城市的图像’或‘我想要一张森林里的小屋图片’。"}];
   final ScrollController _scrollController = ScrollController();
-  final String apiUrl = 'http://10.0.2.2:8000/api/1.0/gptbot/';
+  // final String apiUrl = 'http://10.105.164.201:8000/api/v1/gptbot/';
 
   // 滚动到最新消息处
   void _scrollToBottom() {
@@ -38,10 +39,25 @@ class _GptPage2State extends State<GptPage2> {
     _scrollToBottom();
 
     try {
+      final apiUrl =
+          Uri.parse("http://10.105.164.201:8000/api/v1/gptbot/deepseek_bot/deepseek_online/");
+    
+      // final apiUrl =
+      //     Uri.parse("http://10.105.164.201:8000/api/v1/gptbot/deepseek_bot/");
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final headers = {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": token
+      };
+      final body = jsonEncode({'message': message});
+
       final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json; charset=utf-8'},
-        body: jsonEncode({'message': message}),
+        apiUrl,
+        headers: headers,
+        body: body,
       );
 
       if (response.statusCode == 200) {
@@ -52,6 +68,8 @@ class _GptPage2State extends State<GptPage2> {
         });
       } else {
         setState(() {
+          // final data = jsonDecode(utf8.decode(response.bodyBytes));
+          // final reply = data['response'] ?? 'Error: No response received';
           _messages.add({'role': 'bot', 'content': 'Error: Server error'});
         });
       }
@@ -75,7 +93,7 @@ class _GptPage2State extends State<GptPage2> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'TitanLab-中国移动',
+                '   提示词引导助手',
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
@@ -143,8 +161,7 @@ class _GptPage2State extends State<GptPage2> {
                               )
                             : Image(
                                 width: 14,
-                                image: AssetImage(
-                                    "assets/images/logo/TitanLab.png"),
+                                image: AssetImage("assets/images/logo/y2.jpg"),
                               ),
                       ],
                     ),

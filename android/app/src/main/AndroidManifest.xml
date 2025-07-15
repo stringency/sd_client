@@ -42,5 +42,13 @@
         </intent>
     </queries>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Android 12 及以下 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <!-- Android 13 及以上 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+
 
 </manifest>

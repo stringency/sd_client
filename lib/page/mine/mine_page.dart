@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sd_client/page/mine/result/result_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MinePage extends StatefulWidget {
   const MinePage({super.key});
@@ -14,7 +16,8 @@ class _MinePageState extends State<MinePage> {
       backgroundColor: Colors.grey[100], // Light background color
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0), // Added space to the left and right
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16.0), // Added space to the left and right
           child: Column(
             children: [
               // User Profile Section
@@ -39,11 +42,12 @@ class _MinePageState extends State<MinePage> {
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundImage: AssetImage('assets/images/logo/TitanLab.png'), // Placeholder for avatar image
+                          backgroundImage: AssetImage(
+                              'assets/images/logo/y2.jpg'), // Placeholder for avatar image
                         ),
                         SizedBox(width: 16),
                         Text(
-                          'k1eran',
+                          '1234',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
@@ -108,16 +112,21 @@ class _MinePageState extends State<MinePage> {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 1,
                       blurRadius: 10,
-                      offset: Offset(0, 3), // Changes position of shadow
+                      offset: Offset(0, 3),
                     ),
                   ],
                 ),
                 child: Column(
                   children: [
-                    _buildMenuItem(Icons.folder, '我的文件'),
-                    _buildMenuItem(Icons.remove_red_eye, '我的浏览'),
-                    _buildMenuItem(Icons.person, '用户资料'),
-                    _buildMenuItem(Icons.settings, '设置'),
+                    _buildMenuItem(Icons.picture_in_picture_sharp, '生成图片', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ResultPage()),
+                      );
+                    }),
+                    _buildMenuItem(Icons.remove_red_eye, '我的浏览', () {}),
+                    _buildMenuItem(Icons.person, '用户资料', () {}),
+                    _buildMenuItem(Icons.settings, '设置', () {}),
                   ],
                 ),
               ),
@@ -139,11 +148,33 @@ class _MinePageState extends State<MinePage> {
                 ),
                 child: Column(
                   children: [
-                    _buildMenuItem(Icons.info, '关于我们'),
-                    _buildMenuItem(Icons.phone, '联系我们'),
+                    _buildMenuItem(Icons.info, '关于我们', () {}),
+                    _buildMenuItem(Icons.phone, '联系我们', () {}),
                   ],
                 ),
               ),
+              SizedBox(height: 40),
+              // Logout Button
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12),
+                  ),
+                  onPressed: () {
+                    _showLogoutDialog(context);
+                  },
+                  child: Text(
+                    '退出登录',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20), // 添加一些底部间距
             ],
           ),
         ),
@@ -152,13 +183,51 @@ class _MinePageState extends State<MinePage> {
   }
 
   // Menu item builder
-  Widget _buildMenuItem(IconData icon, String title) {
+  Widget _buildMenuItem(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: Colors.orangeAccent),
       title: Text(title),
       trailing: Icon(Icons.chevron_right),
-      onTap: () {
-        // Handle the tap
+      onTap: onTap,
+    );
+  }
+
+  // Show logout confirmation dialog
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('退出登录'),
+          content: Text('确定要退出登录吗？'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // 可选：移除用户相关数据
+                Navigator.of(context).pop();
+              },
+              child: Text('取消'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // 先清除本地存储的用户数据
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.remove('token'); // 移除存储的登录Token
+                await prefs.remove('user_data');
+                // 这里可以添加登出逻辑，比如清除本地存储的用户数据并返回登录页面
+                Navigator.of(context).pop(); // 先关闭对话框
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/login',
+                  (route) => false,
+                ); // 跳转到登录页面
+              },
+              child: Text(
+                '退出',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
       },
     );
   }

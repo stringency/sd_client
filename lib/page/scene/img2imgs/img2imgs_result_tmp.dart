@@ -1,231 +1,101 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sd_client/page/mine/result/result_page.dart'; // 确保导入结果页面
 
 class Img2ImgsResultTmp extends StatefulWidget {
-  final String modelinfo;
-  final Map<String, dynamic> img2ImgsParams;
+  final Map<String, dynamic> finalParams;
 
-  Img2ImgsResultTmp({
-    super.key,
-    required this.modelinfo,
-    required this.img2ImgsParams,
-  });
+  const Img2ImgsResultTmp({Key? key, required this.finalParams}) : super(key: key);
 
   @override
   _Img2ImgsResultTmpState createState() => _Img2ImgsResultTmpState();
 }
 
 class _Img2ImgsResultTmpState extends State<Img2ImgsResultTmp> {
-  String sdurl = "http://10.0.2.2:8000/api/1.0/img2imgTMP/";
-  List<String> images = [];
-  bool isLoading = true;
-  double progress = 0.0;
-  int jobNo = 0;
-  int jobCount = 0;
-  double etaRelative = 0.0;
-  String currentImage = '';
-  String job = '';
+  bool _isLoading = true; // 控制加载指示器
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    generateImages();
-    checkProgress();
+    _sendRequest(); // 页面初始化时发送请求
   }
 
-  Future<void> generateImages() async {
-    // final url = Uri.parse("http://10.0.2.2:7860/sdapi/v1/txt2img");
-    final url = Uri.parse(sdurl);
-
-    final headers = {"Content-Type": "application/json"};
-    final body = jsonEncode(widget.img2ImgsParams);
-
+  Future<void> _sendRequest() async {
     try {
-      // final response1 = await http.post(url, headers: headers, body: body);
-      // print("r1:${response1.body}");
-      final response = await http.post(url, headers: headers, body: body);
-      // print("r2:${response2.body}");
+      final url = Uri.parse("http://10.105.164.201:8000/api/v1/img2img/");
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        setState(() {
-          images = List<String>.from(responseData['images']);
-          isLoading = false;
-        });
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": token
+      };
+      final body = jsonEncode(widget.finalParams);
+
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: body,
+      );
+
+      if (response.statusCode == 202) {
+        // 请求成功，跳转到结果页面
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ResultPage()),
+        );
       } else {
-        throw Exception('Failed to generate images');
+        // 请求失败
+        setState(() {
+          _isLoading = false;
+          _errorMessage = "请求失败: ${response.statusCode}, ${response.body}";
+        });
       }
     } catch (e) {
       setState(() {
-        isLoading = false;
+        _isLoading = false;
+        _errorMessage = "请求异常: $e";
       });
-      showErrorAndGoBack(e.toString());
     }
-  }
-
-  Future<void> checkProgress() async {
-    final progressUrl = Uri.parse(
-      // "http://10.0.2.2:7860/sdapi/v1/progress?skip_current_image=false",
-      sdurl,
-    );
-    while (isLoading) {
-      try {
-        final response = await http.get(progressUrl);
-
-        if (response.statusCode == 200) {
-          final progressData = jsonDecode(response.body);
-          setState(() {
-            progress = progressData['progress'];
-            etaRelative = progressData['eta_relative'];
-            job = progressData['state']['job'];
-            jobNo = progressData['state']['job_no'] + 1;
-            jobCount = progressData['state']['job_count'];
-            currentImage = progressData['current_image'] ?? '';
-          });
-        }
-      } catch (e) {
-        print(e);
-      }
-      await Future.delayed(Duration(seconds: 1));
-    }
-  }
-
-  void showErrorAndGoBack(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text("连接错误!\n错误信息:$message"),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop(); // 回到上一个界面
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget buildImage(String base64Image) {
-    return Image.memory(
-      base64Decode(base64Image),
-      fit: BoxFit.cover,
-    );
-  }
-
-  Widget buildParamsTable(Map<String, dynamic> params) {
-    List<TableRow> rows = [];
-    params.forEach((key, value) {
-      if (key != "init_images" && key != "image")
-        rows.add(
-          TableRow(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  key,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(value.toString()),
-              ),
-            ],
-          ),
-        );
-    });
-
-    return Table(
-      border: TableBorder.all(),
-      columnWidths: const <int, TableColumnWidth>{
-        0: FixedColumnWidth(150.0),
-        1: FlexColumnWidth(),
-      },
-      children: rows,
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("生成结果"),
-      ),
-      body: isLoading
-          ? Container(
-              alignment: Alignment.center,
-              child: Column(
+      appBar: AppBar(title: Text("正在处理...")),
+      body: Center(
+        child: _isLoading
+            ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 10),
-                  currentImage.isNotEmpty
-                      ? Container(
-                          height: 145.0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: buildImage(currentImage),
-                          ),
-                        )
-                      : Container(
-                          height: 145.0,
-                        ),
-                  SizedBox(height: 10),
-                  CircularProgressIndicator(value: progress),
-                  SizedBox(height: 10),
-                  Text("进度: ${(progress * 100).toStringAsFixed(2)}%"),
-                  SizedBox(height: 5),
-                  Text("当前生成第 $jobNo / $jobCount 张图片"),
-                  SizedBox(height: 5),
-                  Text("预计剩余时间: ${etaRelative.toStringAsFixed(2)} 秒"),
-                  SizedBox(height: 5),
-                  Text("任务: $job"),
-                ],
-              ),
-            )
-          // Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "生成图片:",
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Column(
-                    children: images
-                        .map((base64Image) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: buildImage(base64Image),
-                            ))
-                        .toList(),
-                  ),
+                  CircularProgressIndicator(), // 旋转加载指示器
                   SizedBox(height: 20),
-                  Text(
-                    "生成参数:",
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text("正在生成图片，请稍候..."),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("请求失败"),
                   SizedBox(height: 10),
-                  buildParamsTable(widget.img2ImgsParams),
+                  Text(_errorMessage ?? "未知错误"),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _isLoading = true;
+                        _errorMessage = null;
+                      });
+                      _sendRequest(); // 重新发送请求
+                    },
+                    child: Text("重试"),
+                  ),
                 ],
               ),
-            ),
+      ),
     );
   }
 }

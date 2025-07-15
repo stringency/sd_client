@@ -37,4 +37,9 @@ const Map<String, Map<String, dynamic>> modelInfos = {
     "sd_model_checkpoint": "dreamshaper_8.safetensors [879db523c3]",
     "lora": [",<lora:MooMoo-Golden Cosmetic:1>,"]
   },
+  'Logo设计宫崎骏': {
+    "sd_model_checkpoint": "cheesedOutAnime_v15.safetensors [158df08cfb]",
+    "sd_vae": "cheesedOutAnime_v15.safetensors",
+    "lora": [",<lora:jun:0.5>,"]
+  },
 };

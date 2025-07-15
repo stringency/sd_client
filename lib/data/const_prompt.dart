@@ -40,4 +40,7 @@ Map<String, String> promptTemplate = {
       "DDicon,Transparent Blue,no humans,sky,cloud,scenery,outdoors,linear,line,[runway::cityscape:0.5],magnificent_architecture,blue sky,sun,sunlight,skyscraper,cloudy sky,day,lens flare,cover,",
   "营销展会中国移动":
       "Minimalist cartoon style,UNI-APP business application theme,clean and simple design,clear lines,fresh and airy feel,dark blue background,high contrast  elements,distinct and well-defined features,tech-inspired icons,well-organized layout,high quality,web cover,",
+  "Logo设计风格宫崎骏":
+      "Anime merchandise promotion poster, featuring popular anime characters and a variety of products such as figurines, posters, toys, and apparel BREAK vibrant colors like red, blue, yellow, and purple to attract attention BREAK dynamic and energetic design, with cartoonish elements and bold text effects, emphasizing creativity and enthusiasm, highly detailed, engaging for anime fans,",
+  
 };

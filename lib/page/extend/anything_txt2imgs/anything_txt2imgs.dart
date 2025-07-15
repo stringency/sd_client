@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sd_client/data/const_txt2imgs.dart';
 import 'package:sd_client/data/scene_style_models.dart';
+import 'package:sd_client/page/mine/result/result_page.dart';
 
 import 'package:sd_client/page/scene/txt2imgs/txt2imgs_result_tmp.dart';
 import 'package:sd_client/tools/gpt_page2.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class AnythingTxt2Imgs extends StatefulWidget {
   final String? selectedScene;
@@ -50,6 +55,11 @@ class _AnythingTxt2ImgsState extends State<AnythingTxt2Imgs> {
   @override
   void initState() {
     super.initState();
+    _initData();
+  }
+
+  void _initData() {
+    // 这里写你的初始化逻辑，比如重置 finalParams
     print("${widget.selectedScene}${widget.selectedStyle![0]}");
     finalParams = Map<String, dynamic>.from(
         paramTxt2Imgs["${widget.selectedScene}${widget.selectedStyle![0]}"]);
@@ -527,7 +537,7 @@ class _AnythingTxt2ImgsState extends State<AnythingTxt2Imgs> {
                     ),
                   ],
                 ),
-                ],
+              ],
             ],
           ),
         ),
@@ -546,7 +556,7 @@ class _AnythingTxt2ImgsState extends State<AnythingTxt2Imgs> {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
                 // 整合参数，转为json
 
                 // 参数填充
@@ -564,6 +574,7 @@ class _AnythingTxt2ImgsState extends State<AnythingTxt2Imgs> {
                 // 蒙版参数
                 // finalParams['alwayson_scripts']['controlnet']['args'][0]
                 //     ['image']['mask'] = mask_images[0];
+                print(finalParams!['prompt']);
                 finalParams!['prompt'] = _controller1.text.isNotEmpty
                     ? finalParams!['prompt'] + _controller1.text
                     : finalParams!['prompt'];
@@ -586,7 +597,7 @@ class _AnythingTxt2ImgsState extends State<AnythingTxt2Imgs> {
                 finalParams!['steps'] = _steps;
                 // 重绘强度
                 finalParams!['denoising_strength'] = _denoising_strength;
-                
+
                 // test
                 // seed:
                 // finalParams!['seed'] = -1;
@@ -595,20 +606,78 @@ class _AnythingTxt2ImgsState extends State<AnythingTxt2Imgs> {
                 // print(finalParams);
 
                 // 发送参数到云端，获取队列信息
-
-                // 传递参数到结果页，具体生成结果交由结果页处理
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        Txt2ImgsResultTmp(txt2ImgsParams: finalParams!),
-                  ),
-                ).then((value) {
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          Txt2ImgsResultTmp(finalParams: finalParams!),
+                    )).then((value) {
                   setState(() {
                     finalParams = Map.from(paramTxt2Imgs[
                         "${widget.selectedScene}${widget.selectedStyle![0]}"]);
                   });
                 });
+
+                // try {
+                //   // 发送 POST 请求
+                //   // final response = await http.post(
+                //   //   Uri.parse("http://10.105.164.201:8000/api/1.0/txt2img/"),
+                //   //   headers: {"Content-Type": "application/json"},
+                //   //   body: jsonEncode(finalParams),
+                //   // );
+
+                //   final url = Uri.parse("http://10.105.164.201:8000/api/v1/txt2img/");
+
+                //   final prefs = await SharedPreferences.getInstance();
+                //   final token = prefs.getString('token') ?? '';
+
+                //   final headers = {
+                //     "Content-Type": "application/json",
+                //     "Authorization": token
+                //   };
+                //   final body = jsonEncode(finalParams);
+
+                //   final response = await http.post(
+                //     url,
+                //     headers: headers,
+                //     body: body,
+                //   );
+                //   // 判断响应状态码是否为202（Accepted）,因为用来celery的异步任务，所以这里是202而不是200
+                //   if (response.statusCode == 202) {
+                //     // 解析响应数据
+                //     // final responseData = jsonDecode(response.body);
+
+                //     // 跳转到结果页面
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => ResultPage(),
+                //       ),
+                //     ).then((value) {
+                //       setState(() {
+                //         _initData();
+                //       }); // 重新加载界面
+                //     });
+                //   } else {
+                //     print("请求失败: ${response.statusCode}, ${response.body}");
+                //   }
+                // } catch (e) {
+                //   print("请求异常: $e");
+                // }
+
+                // 传递参数到结果页，具体生成结果交由结果页处理
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) =>
+                //         Txt2ImgsResultTmp(txt2ImgsParams: finalParams!),
+                //   ),
+                // ).then((value) {
+                //   setState(() {
+                //     finalParams = Map.from(paramTxt2Imgs[
+                //         "${widget.selectedScene}${widget.selectedStyle![0]}"]);
+                //   });
+                // });
               },
               child: Center(
                 child: Text(

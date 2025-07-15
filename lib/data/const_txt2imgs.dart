@@ -65,9 +65,9 @@ Map<String, dynamic> paramTxt2Imgs = {
   },
   "营销展会宫崎骏": {
     "prompt":
-        "Anime merchandise promotion poster, featuring popular anime characters and a variety of products such as figurines, posters, toys, and apparel BREAK vibrant colors like red, blue, yellow, and purple to attract attention BREAK dynamic and energetic design, with cartoonish elements and bold text effects, emphasizing creativity and enthusiasm, highly detailed, engaging for anime fans",
+        "Anime poster, blue, yellow, and purple to attract attention BREAK dynamic and energetic design, emphasizing creativity and enthusiasm",
     "negative_prompt":
-        "text, blurry, low quality, noise, distorted, deformed, asymmetrical, sketch, doodle, cluttered background, messy, irrelevant objects, overexposed, dark, low light, monochrome, low saturation, color bleed, strange expressions, blurry face, unnatural expressions, poor composition, chaotic composition, weird angles, depressing, gloomy, negative emotions",
+        "NSFW,(worst quality:2),(low quality:2)(normal quality:2),lowres, normal quality,((monochrome)),((grayscale)),skin spots,acnes,skin blemishes,age spot,(ugly:1.331),(duplicate:1.331),(morbid:1.21),(extra legs:1.331)(fused fingers:1.5),(too many fingers:1.5)(unclear eyes:1.331),lowers, bad hands,missing fingers, extra diqit,bad handsmissing fingers, (((extra arms and legs))), text, blurry, low quality, noise, distorted, deformed, asymmetrical, sketch, doodle, cluttered background, messy, irrelevant objects, overexposed, dark, low light, monochrome, low saturation, color bleed, strange expressions, blurry face, unnatural expressions, poor composition, chaotic composition, weird angles, depressing, gloomy, negative emotions",
     "styles": [],
     "seed": -1,
     "subseed": -1,
@@ -300,86 +300,7 @@ Map<String, dynamic> paramTxt2Imgs = {
     },
     "infotext": ""
   },
-  "营销展会中国龙": {
-    "prompt":
-        "(1 dragon: 1.5),break,chinese New Year celebration poster,traditional style,festive and joyful atmosphere, red lanterns,",
-    "negative_prompt":
-        "text, blurry, low quality, noise, distorted, deformed, asymmetrical, sketch, doodle, cluttered background, messy, irrelevant objects, overexposed, dark, low light, monochrome, low saturation, color bleed, strange expressions, blurry face, unnatural expressions, poor composition, chaotic composition, weird angles, depressing, gloomy, negative emotions",
-    "batch_size": 1,
-    "cfg_scale": 7,
-    "comments": {},
-    "denoising_strength": 0.7,
-    "disable_extra_networks": false,
-    "do_not_save_grid": false,
-    "do_not_save_samples": false,
-    "enable_hr": false,
-    "height": 1024,
-    "width": 768,
-    "hr_negative_prompt": "",
-    "hr_prompt": "",
-    "hr_resize_x": 0,
-    "hr_resize_y": 0,
-    "hr_scale": 2,
-    "hr_second_pass_steps": 0,
-    "hr_upscaler": "Latent",
-    "n_iter": 1,
-    "override_settings": {},
-    "override_settings_restore_afterwards": true,
-    "restore_faces": false,
-    "s_churn": 0,
-    "s_min_uncond": 0,
-    "s_noise": 1,
-    "s_tmax": null,
-    "s_tmin": 0,
-    "sampler_name": "DPM++ SDE",
-    "scheduler": "Automatic",
-    "script_args": [],
-    "script_name": null,
-    "seed": -1,
-    "seed_enable_extras": true,
-    "seed_resize_from_h": -1,
-    "seed_resize_from_w": -1,
-    "steps": 30,
-    "styles": [],
-    "subseed": -1,
-    "subseed_strength": 0,
-    "tiling": false,
-    "alwayson_scripts": {
-      "controlnet": {
-        "args": [
-          {
-            "control_mode": "Balanced",
-            "effective_region_mask": null,
-            "enabled": true,
-            "guidance_start": 0.0,
-            "guidance_end": 1.0,
-            "weight": 1.0,
-            "hr_option": "Both",
-            "inpaint_crop_input_image": false,
-            "input_mode": "simple",
-            "ipadapter_input": null,
-            "is_ui": true,
-            "loopback": false,
-            "low_vram": false,
-            "mask": null,
-            "model": "control_v11p_sd15_canny [d14c016b]",
-            "module": "canny",
-            "output_dir": "",
-            "pixel_perfect": false,
-            "processor_res": 1024,
-            "pulid_mode": "Fidelity",
-            "resize_mode": "Crop and Resize",
-            "save_detected_map": true,
-            "threshold_a": 100.0,
-            "threshold_b": 200.0,
-            "union_control_type": "Hard Edge",
-            "image": {"image": null}
-          }
-        ]
-      }
-    }
-  },
-  "营销展会中国移动": {
+  "营销展会简洁风": {
     "prompt":
         "Minimalist cartoon style,UNI-APP business application theme,clean and simple design,clear lines,fresh and airy feel,dark blue background,high contrast  elements,distinct and well-defined features,tech-inspired icons,well-organized layout,high quality,web cover,",
     "negative_prompt":
@@ -443,4 +364,99 @@ Map<String, dynamic> paramTxt2Imgs = {
     },
     "infotext": ""
   },
+  "Logo设计宫崎骏": {
+    "prompt":
+        "Anime merchandise promotion poster, featuring popular anime characters and a variety of products such as figurines, posters, toys, and apparel BREAK vibrant colors like red, blue, yellow, and purple to attract attention BREAK dynamic and energetic design, with cartoonish elements and bold text effects, emphasizing creativity and enthusiasm, highly detailed, engaging for anime fans",
+    "negative_prompt":
+        "text, blurry, low quality, noise, distorted, deformed, asymmetrical, sketch, doodle, cluttered background, messy, irrelevant objects, overexposed, dark, low light, monochrome, low saturation, color bleed, strange expressions, blurry face, unnatural expressions, poor composition, chaotic composition, weird angles, depressing, gloomy, negative emotions",
+    "styles": [],
+    "seed": -1,
+    "subseed": -1,
+    "subseed_strength": 0,
+    "seed_resize_from_h": -1,
+    "seed_resize_from_w": -1,
+    "sampler_name": "DPM++ SDE",
+    "scheduler": "Automatic",
+    "batch_size": 1,
+    "cfg_scale": 7,
+    "comments": {},
+    "denoising_strength": 0.7,
+    "n_iter": 1,
+    "steps": 30,
+    "width": 768,
+    "height": 1024,
+    "restore_faces": false,
+    "tiling": false,
+    "do_not_save_samples": false,
+    "do_not_save_grid": false,
+    "enable_hr": false,
+    "hr_negative_prompt": "",
+    "hr_prompt": "",
+    "hr_resize_x": 0,
+    "hr_resize_y": 0,
+    "hr_scale": 2,
+    "hr_second_pass_steps": 0,
+    "hr_upscaler": "Latent",
+    "override_settings": {
+      "sd_model_checkpoint": "",
+      "sd_vae": "Automatic"
+    }, // 用户决定
+    "override_settings_restore_afterwards": true,
+    "s_churn": 0,
+    "s_min_uncond": 0,
+    "s_noise": 1,
+    "s_tmax": null,
+    "s_tmin": 0,
+    // "firstphase_width": 0,
+    // "firstphase_height": 0,
+    "force_task_id": "",
+    "sampler_index": "DPM++ SDE",
+    "script_name": "",
+    "script_args": [],
+    "send_images": true,
+    "save_images": false,
+    "alwayson_scripts": {
+      "controlnet": {
+        "args": [
+          {
+            "advanced_weighting": null,
+            "animatediff_batch": false,
+            "batch_image_files": [],
+            "batch_images": "",
+            "batch_keyframe_idx": null,
+            "batch_mask_dir": null,
+            "batch_modifiers": [],
+            "ipadapter_input": null,
+            "inpaint_crop_input_image": false,
+            "is_ui": true,
+            "loopback": false,
+            "mask": null,
+            "output_dir": "",
+            "pixel_perfect": false,
+            "processor_res": 1024,
+            "pulid_mode": "Fidelity",
+            "enabled": true,
+            "control_mode": "Balanced",
+            "effective_region_mask": null,
+            "guidance_start": 0.1,
+            "guidance_end": 1.0,
+            "weight": 1.0,
+            "hr_option": "Both",
+            "input_mode": "simple",
+            "low_vram": false,
+            "model": "control_v11p_sd15_canny [d14c016b]",
+            "module": "canny",
+            "resize_mode": "Crop and Resize",
+            "save_detected_map": true,
+            "threshold_a": 100.0,
+            "threshold_b": 200.0,
+            "union_control_type": "Hard Edge",
+            "image": {"image": null} // 用户决定
+          }
+        ]
+      }
+    },
+    "infotext": ""
+  },
+  
 };
